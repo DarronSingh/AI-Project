@@ -23,7 +23,7 @@ public class Simulation extends JPanel {
 		setup();
 		setFocusable(true);
 		isSimulating = true;
-		System.out.println("Sim Started");
+		System.out.println("Simulation started Started");
 	}
 	
 	public void setup() {
@@ -40,19 +40,19 @@ public class Simulation extends JPanel {
 		System.out.println("All nodes initialized");
 		
 		// pick locations for target nodes
-		Integer[] xlocs = new Integer[100];
-		Integer[] ylocs = new Integer[100];
+		Integer[] xls = new Integer[100];
+		Integer[] yls = new Integer[100];
 		for (int i=0; i<SIZE; i++) {
-			xlocs[i] = i;
-			ylocs[i] = i;
+			xls[i] = i;
+			yls[i] = i;
 		}
-		Collections.shuffle(Arrays.asList(xlocs)); // x coordinates for targets
-		Collections.shuffle(Arrays.asList(ylocs)); // y coordinates for targets
+		Collections.shuffle(Arrays.asList(xls)); // x coordinates for targets
+		Collections.shuffle(Arrays.asList(yls)); // y coordinates for targets
 		
 		// setup targets for agents 0 - 4
 		for (int i=0; i<agents.length*5; i++) {
-			nodes[xlocs[i]][ylocs[i]].setAgentID(i%5);
-			System.out.println("target " + i + " created at x:" + nodes[xlocs[i]][ylocs[i]].getX() + ", y:" + nodes[xlocs[i]][ylocs[i]].getY());
+			nodes[xls[i]][yls[i]].setAgentID(i%5);
+			System.out.println("target " + i + " created at x:" + nodes[xls[i]][yls[i]].getX() + ", y:" + nodes[xls[i]][yls[i]].getY());
 		}
 	}
 
