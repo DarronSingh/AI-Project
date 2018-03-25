@@ -1,7 +1,6 @@
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -23,7 +22,7 @@ public class Simulation extends JPanel {
 		setup();
 		setFocusable(true);
 		isSimulating = true;
-		System.out.println("Simulation started Started");
+		System.out.println("Simulation started");
 	}
 	
 	public void setup() {
@@ -37,7 +36,6 @@ public class Simulation extends JPanel {
 			for (int j=0; j<SIZE; j++)
 				nodes[i][j] = new Node(i, j, FRAMEX, FRAMEY);
 		}
-		System.out.println("All nodes initialized");
 		
 		// pick locations for target nodes
 		Integer[] xls = new Integer[100];
@@ -51,9 +49,18 @@ public class Simulation extends JPanel {
 		
 		// setup targets for agents 0 - 4
 		for (int i=0; i<agents.length*5; i++) {
+			nodes[xls[i]][yls[i]].setTargetID(i);
 			nodes[xls[i]][yls[i]].setAgentID(i%5);
 			System.out.println("target " + i + " created at x:" + nodes[xls[i]][yls[i]].getX() + ", y:" + nodes[xls[i]][yls[i]].getY());
 		}
+	}
+	
+	public void detectAgentCollision() {
+		
+	}
+	
+	public void detectTargetCollision() {
+		// collect target
 	}
 
 	public void update() {
@@ -68,14 +75,22 @@ public class Simulation extends JPanel {
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 		
+		// paint the targets
+		for (int i=0; i<SIZE; i++) {
+			for (int j=0; j<SIZE; j++)
+				nodes[i][j].draw(g2d);
+		}
 		
+		// paint the agents
+		for (int i=0; i<agents.length; i++)
+			agents[i].draw(g2d);
 	}
 	
 	public static void main(String args[]) throws InterruptedException {
 		JFrame frame = new JFrame(SIMNAME);
 		Simulation sim = new Simulation();
 		frame.add(sim);
-		frame.setSize(FRAMEX, FRAMEY);
+		frame.setSize(FRAMEX+15, FRAMEY+40); // offset so all cells show in window
 		frame.setResizable(false);
 		frame.setLocationRelativeTo(null);
 		frame.setAlwaysOnTop(true);
@@ -84,7 +99,7 @@ public class Simulation extends JPanel {
 		
 		while(sim.isSimulating) {
 			sim.update();
-//			sim.repaint();
+			sim.repaint();
 			Thread.sleep(15);
 		}
 	}
