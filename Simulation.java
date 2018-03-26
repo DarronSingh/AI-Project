@@ -16,7 +16,7 @@ public class Simulation extends JPanel {
 	public boolean isSimulating;
 	
 	private static Node[][] nodes = new Node[SIZE][SIZE];
-	private static Agent[] agents = new Agent[3];
+	private static Agent[] agents = new Agent[5];
 
 	public Simulation() {
 		setup();
@@ -120,6 +120,9 @@ public class Simulation extends JPanel {
 					System.out.println(String.valueOf("Agent " + agents[i].getAgentID()) + " won!");
 					isSimulating = false;
 				}
+			}
+			if (agents[i].getPrivateaBroadcast() != "") {
+				// handle private broadcasts
 			}
 		}
 	}

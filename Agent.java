@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
@@ -8,6 +9,7 @@ public class Agent {
 	private int agentID;
 	private int x, y, radius, velX, velY;
 	private int frameX, frameY;
+	Font font;
 	private ArrayList<Node> targets = new ArrayList<Node>();
 	private String publicBroadcast, privateBroadcast;
 	
@@ -21,6 +23,7 @@ public class Agent {
 		
 		publicBroadcast = "";
 		privateBroadcast = "";
+		font = new Font("TimesRoman", Font.PLAIN, 16);
 		System.out.println("Agent " + agentID + " created");
 	}
 	
@@ -78,7 +81,9 @@ public class Agent {
 		g2d.drawOval(x*10, y*10, 2*radius*10-2, 2*radius*10-2);
 		
 		// draw agent
-		g2d.fillRect(x*10+(2*radius*10/2), y*10+(2*radius*10/2), 5, 5);
+//		g2d.fillRect(x*10+(2*radius*10/2), y*10+(2*radius*10/2), 5, 5);
+		g2d.setFont(font);
+		g2d.drawString(String.valueOf(agentID), x*10+(2*radius*10/2), y*10+(2*radius*10/2));
 	}
 	
 	public int getAgentID() {
