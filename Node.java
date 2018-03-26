@@ -1,5 +1,4 @@
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics2D;
 
 public class Node {
@@ -10,6 +9,7 @@ public class Node {
 	public Node(int x, int y, int frameX, int frameY) {
 		this.x = x;
 		this.y = y;
+		clearTarget(); // no target by default
 		width = frameX / 100; // scale width for board size
 	}
 
@@ -19,7 +19,7 @@ public class Node {
 		g2d.drawRect(x*10, y*10, width, width);
 		
 		// draw targets
-		if (agentID>0) {
+		if (agentID>=0) {
 			switch (agentID) {
 			case 0:
 				g2d.setColor(Color.GREEN);
@@ -40,10 +40,6 @@ public class Node {
 			
 			// scale up coordinates for drawing
 			g2d.fillRect(x*10, y*10, width, width);
-			
-//			g2d.setColor(Color.black);
-//			g2d.setFont(new Font("Courier", Font.CENTER_BASELINE, 20));
-//			g2d.drawString(String.valueOf(targetID), x*10, y*10+width);
 		}
 	}
 
@@ -69,5 +65,10 @@ public class Node {
 	
 	public int getY() {
 		return y;
+	}
+
+	public void clearTarget() {
+		agentID = -1;
+		targetID = -1;
 	}
 }

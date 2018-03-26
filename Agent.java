@@ -6,7 +6,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Agent {
 	
 	private int agentID;
-	private int x, y, radius, velocity;
+	private int x, y, radius, velX, velY;
 	private int frameX, frameY;
 	private ArrayList<Node> targets = new ArrayList<Node>();
 	private String publicBroadcast, privateBroadcast;
@@ -15,8 +15,8 @@ public class Agent {
 		this.agentID = agentID;
 		this.frameX = frameX;
 		this.frameY = frameY;
-		radius = 20; // radar distance
-		velocity = 1; // 1cm
+		radius = 10; // radar radius
+		velX = velY = 1; // 1cm per time
 		spawn();
 		
 		publicBroadcast = "";
@@ -26,17 +26,32 @@ public class Agent {
 	
 	public void spawn() {
 		// scaled down x and y location
-		x = ThreadLocalRandom.current().nextInt(0, frameX/10-radius);
-		y = ThreadLocalRandom.current().nextInt(0, frameY/10-radius);
+		x = ThreadLocalRandom.current().nextInt(0, frameX/10-2*radius);
+		y = ThreadLocalRandom.current().nextInt(0, frameY/10-2*radius);
+	}
+	
+	public void move() {
+		// check wall collision
+		if (x*10 <= 0 && velX<0)
+			velX = -velX;
+		else if (x*10+2*radius*10 >= frameX && velX>0)
+			velX = -velX;
+		if (y*10 <= 0 && velY<0)
+			velY = -velY;
+		else if (y*10+2*radius*10 >= frameY && velY>0)
+			velY = -velY;
+		
+		// move agent
+		x+=velX;
+		y+=velY;
 	}
 	
 	public void update() {
 		if (targets.size() == 5)
-			publicBroadcast = "win";
+			publicBroadcast = "won";
 	}
 	
 	public void draw(Graphics2D g2d) {
-		
 		// color code agents
 		switch (agentID) {
 		case 0:
@@ -58,12 +73,16 @@ public class Agent {
 		
 		// scale up coordinates when drawing
 		// draw radar
-		g2d.drawOval(x*10, y*10, radius*10, radius*10);
-		g2d.drawOval(x*10, y*10, radius*10-1, radius*10-1);
-		g2d.drawOval(x*10, y*10, radius*10-2, radius*10-2);
+		g2d.drawOval(x*10, y*10, 2*radius*10, 2*radius*10);
+		g2d.drawOval(x*10, y*10, 2*radius*10-1, 2*radius*10-1);
+		g2d.drawOval(x*10, y*10, 2*radius*10-2, 2*radius*10-2);
 		
 		// draw agent
-		g2d.fillRect(x*10+(radius*10/2), y*10+(radius*10/2), 5, 5);
+		g2d.fillRect(x*10+(2*radius*10/2), y*10+(2*radius*10/2), 5, 5);
+	}
+	
+	public int getAgentID() {
+		return agentID;
 	}
 	
 	public int getX() {
@@ -72,6 +91,30 @@ public class Agent {
 	
 	public int getY() {
 		return y;
+	}
+	
+	public int getRadius() {
+		return radius;
+	}
+	
+	public int getDiameter() {
+		return 2*radius;
+	}
+	
+	public int getVelX() {
+		return velX;
+	}
+	
+	public int getVelY() {
+		return velY;
+	}
+	
+	public void setVelX(int velX) {
+		this.velX = velX;
+	}
+	
+	public void setVelY(int velY) {
+		this.velY = velY;
 	}
 	
 	public ArrayList<Node> getTargets() {

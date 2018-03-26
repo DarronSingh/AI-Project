@@ -16,7 +16,7 @@ public class Simulation extends JPanel {
 	public boolean isSimulating;
 	
 	private static Node[][] nodes = new Node[SIZE][SIZE];
-	private static Agent[] agents = new Agent[5];
+	private static Agent[] agents = new Agent[3];
 
 	public Simulation() {
 		setup();
@@ -50,22 +50,78 @@ public class Simulation extends JPanel {
 		// setup targets for agents 0 - 4
 		for (int i=0; i<agents.length*5; i++) {
 			nodes[xls[i]][yls[i]].setTargetID(i);
-			nodes[xls[i]][yls[i]].setAgentID(i%5);
-			System.out.println("target " + i + " created at x:" + nodes[xls[i]][yls[i]].getX() + ", y:" + nodes[xls[i]][yls[i]].getY());
+			nodes[xls[i]][yls[i]].setAgentID(i/5);
+			System.out.println("Target " + i + " for Agent " + i/5 + " created at x:" + nodes[xls[i]][yls[i]].getX() + ", y:" + nodes[xls[i]][yls[i]].getY());
 		}
 	}
 	
 	public void detectAgentCollision() {
-		
+		for (int i=0; i<agents.length; i++) {
+			for (int j=0; j<agents.length; j++) {
+				// get center coordinates
+				int cX1 = agents[i].getX()+agents[i].getRadius();
+				int cY1 = agents[i].getY()+agents[i].getRadius();
+				int cX2 = agents[j].getX()+agents[j].getRadius();
+				int cY2 = agents[j].getY()+agents[j].getRadius();
+				
+				// get distance squared and radius squared
+				int dSqr = (int) (Math.pow((cX2 - cX1), 2) + Math.pow((cY2 - cY1), 2));
+				int rSqr = (int) Math.pow(agents[i].getRadius() + agents[j].getRadius(), 2);
+				
+				if (dSqr <= rSqr) {
+					// swap velocities
+					int tempVelX = agents[i].getVelX();
+					int tempVelY = agents[i].getVelY();
+					
+					agents[i].setVelX(agents[j].getVelX());
+					agents[i].setVelY(agents[j].getVelY());
+//					agents[i].move();
+					
+					agents[j].setVelX(tempVelX);
+					agents[j].setVelY(tempVelY);
+//					agents[j].move();
+				}
+			}
+			agents[i].move();
+		}
 	}
 	
 	public void detectTargetCollision() {
-		// collect target
+		for (int k=0; k<agents.length; k++) {
+			for (int i=0; i<SIZE; i++) {
+				for (int j=0; j<SIZE; j++) {
+					if (nodes[i][j].getAgentID() == agents[k].getAgentID()) {
+						int aX = agents[k].getX()+agents[k].getRadius();
+						int aY = agents[k].getY()+agents[k].getRadius();
+						int tX = nodes[i][j].getX();
+						int tY = nodes[i][j].getY();
+						
+						if (Math.pow(tX - aX, 2) + Math.pow(tY - aY, 2) < Math.pow(agents[k].getRadius(), 2)) {
+							System.out.println("Agent: " + agents[k].getAgentID() + " found Target: " + nodes[i][j].getTargetID());
+							agents[k].addTarget(nodes[i][j]); // add to list of targets
+							nodes[i][j].clearTarget(); // remove targetID and agentID
+							continue;
+						}
+					}
+				}
+			}
+		}
 	}
 
 	public void update() {
-		// check for agent broadcasts
-		// handle them, then reset to ""
+		detectAgentCollision();
+		detectTargetCollision();
+		
+		// update the agents
+		for (int i=0; i<agents.length; i++) {
+			agents[i].update();
+			if (agents[i].getPublicBroadcast() != "") {
+				if (agents[i].getPublicBroadcast().equals("won")) {
+					System.out.println(String.valueOf("Agent " + agents[i].getAgentID()) + " won!");
+					isSimulating = false;
+				}
+			}
+		}
 	}
 	
 	public void paint(Graphics g) {
@@ -100,7 +156,7 @@ public class Simulation extends JPanel {
 		while(sim.isSimulating) {
 			sim.update();
 			sim.repaint();
-			Thread.sleep(15);
+			Thread.sleep(30);
 		}
 	}
 }
