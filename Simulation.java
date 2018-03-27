@@ -96,7 +96,7 @@ public class Simulation extends JPanel {
 						int tX = nodes[i][j].getX();
 						int tY = nodes[i][j].getY();
 						
-						if (Math.pow(tX - aX, 2) + Math.pow(tY - aY, 2) < Math.pow(agents[k].getRadius(), 2)) {
+						if (Math.pow(tX - aX, 2) + Math.pow(tY - aY, 2) <= Math.pow(agents[k].getRadius(), 2)) {
 							System.out.println("Agent: " + agents[k].getAgentID() + " found Target: " + nodes[i][j].getTargetID());
 							agents[k].addTarget(nodes[i][j]); // add to list of targets
 							nodes[i][j].clearTarget(); // remove targetID and agentID
@@ -109,20 +109,37 @@ public class Simulation extends JPanel {
 	}
 
 	public void update() {
-		detectAgentCollision();
+//		detectAgentCollision(); // fix this
 		detectTargetCollision();
 		
-		// update the agents
+		// loop through all agents
 		for (int i=0; i<agents.length; i++) {
-			agents[i].update();
-			if (agents[i].getPublicBroadcast() != "") {
-				if (agents[i].getPublicBroadcast().equals("won")) {
-					System.out.println(String.valueOf("Agent " + agents[i].getAgentID()) + " won!");
-					isSimulating = false;
+			
+			// check if the agent is still active
+			if (agents[i].isActive) {
+				agents[i].update(); // update the agent
+				
+				// check if public broadcast exists
+				if (agents[i].getPublicBroadcast() != "") {
+					
+					// check for win condition
+					if (agents[i].getPublicBroadcast().equals("won")) {
+						System.out.println(String.valueOf("Agent " + agents[i].getAgentID()) + " won!");
+						isSimulating = false;
+					}
+					
+					// check for path completion
+					else if (agents[i].getPublicBroadcast().equals("done path")) {
+						System.out.println(String.valueOf("Agent " + agents[i].getAgentID()) + " has comepleted it's path.");
+					}
+					
+					agents[i].resetPublicBroadcast(); // clear broadcast
 				}
-			}
-			if (agents[i].getPrivateaBroadcast() != "") {
-				// handle private broadcasts
+				
+				if (agents[i].getPrivateaBroadcast() != "") {
+					// handle private broadcasts
+					agents[i].resetPrivateaBroadcast(); // clear broadcast
+				}
 			}
 		}
 	}
