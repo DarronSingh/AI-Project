@@ -97,7 +97,7 @@ public class Simulation extends JPanel {
 						int tY = nodes[i][j].getY();
 						
 						if (Math.pow(tX - aX, 2) + Math.pow(tY - aY, 2) <= Math.pow(agents[k].getRadius(), 2)) {
-							System.out.println("Agent: " + agents[k].getAgentID() + " found Target: " + nodes[i][j].getTargetID());
+							System.out.println("Agent: " + agents[k].getAgentID() + " (" + agents[k].getColor() +") found Target: " + nodes[i][j].getTargetID());
 							agents[k].addTarget(nodes[i][j]); // add to list of targets
 							nodes[i][j].clearTarget(); // remove targetID and agentID
 							continue;
@@ -124,13 +124,13 @@ public class Simulation extends JPanel {
 					
 					// check for win condition
 					if (agents[i].getPublicBroadcast().equals("won")) {
-						System.out.println(String.valueOf("Agent " + agents[i].getAgentID()) + " won!");
+						System.out.println(String.valueOf("Agent: " + agents[i].getAgentID()) + " (" + agents[i].getColor() +") won!");
 						isSimulating = false;
 					}
 					
 					// check for path completion
 					else if (agents[i].getPublicBroadcast().equals("done path")) {
-						System.out.println(String.valueOf("Agent " + agents[i].getAgentID()) + " has comepleted it's path.");
+						System.out.println(String.valueOf("Agent: " + agents[i].getAgentID()) + " (" + agents[i].getColor() +") has comepleted it's path.");
 					}
 					
 					agents[i].resetPublicBroadcast(); // clear broadcast
