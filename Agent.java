@@ -39,38 +39,38 @@ public class Agent {
 	
 	public void setupPath() {
 		// create path, define start and end
-				switch (agentID) {
-				case 0:
-					color = "GREEN";
-					currentTarget = new Coordinate(0, 0); // start
-					generatePath();
-					path.add(new Coordinate(0, 0)); // end
-					break;
-				case 1:
-					color = "BLUE";
-					currentTarget = new Coordinate(0, 20); // start
-					generatePath();
-					path.add(new Coordinate(0, 20)); // end
-					break;
-				case 2:
-					color = "BLACK";
-					currentTarget = new Coordinate(0, 40); // start
-					generatePath();
-					path.add(new Coordinate(0, 40)); // end
-					break;
-				case 3:
-					color = "ORANGE";
-					currentTarget = new Coordinate(0, 60); // start
-					generatePath();
-					path.add(new Coordinate(0, 60)); // end
-					break;
-				case 4:
-					color = "RED";
-					currentTarget = new Coordinate(0, 80); // start
-					generatePath();
-					path.add(new Coordinate(0, 80)); // end
-					break;
-				}
+		switch (agentID) {
+		case 0:
+			color = "GREEN";
+			currentTarget = new Coordinate(0, 0); // start
+			generatePath();
+			path.add(new Coordinate(0, 0)); // end
+			break;
+		case 1:
+			color = "BLUE";
+			currentTarget = new Coordinate(0, 20); // start
+			generatePath();
+			path.add(new Coordinate(0, 20)); // end
+			break;
+		case 2:
+			color = "BLACK";
+			currentTarget = new Coordinate(0, 40); // start
+			generatePath();
+			path.add(new Coordinate(0, 40)); // end
+			break;
+		case 3:
+			color = "ORANGE";
+			currentTarget = new Coordinate(0, 60); // start
+			generatePath();
+			path.add(new Coordinate(0, 60)); // end
+			break;
+		case 4:
+			color = "RED";
+			currentTarget = new Coordinate(0, 80); // start
+			generatePath();
+			path.add(new Coordinate(0, 80)); // end
+			break;
+		}
 	}
 	
 	public void generatePath() {
@@ -128,8 +128,8 @@ public class Agent {
 	public void update() {
 		move();
 		
-//		if (targets.size() == 5)
-//			publicBroadcast = "won";
+		if (targets.size() == 5)
+			publicBroadcast = "won";
 	}
 	
 	public void draw(Graphics2D g2d) {
