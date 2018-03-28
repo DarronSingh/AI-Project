@@ -9,4 +9,5 @@ This repository contains the AI Project
 - [ ] Create Broadcast class for private and public broadcasts
   - private should be directed to recipient, will contain coordinates for target
 
-![](https://i.imgur.com/xChvBe7.gifv)
+![](https://i.imgur.com/xChvBe7.gif)
+
