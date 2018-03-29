@@ -63,7 +63,7 @@ public class Simulation extends JPanel {
 				if (agents[i].getAgentID() == agents[j].getAgentID())
 					continue;
 				
-				// remove if necessary
+				// if it already diverting, leave alone
 				if (agents[i].isDiverting || agents[j].isDiverting)
 					continue;
 				
@@ -74,93 +74,33 @@ public class Simulation extends JPanel {
 				int y2 = agents[j].getY();
 				int velX1 = agents[i].getVelX();
 				int velY1 = agents[i].getVelY();
-				int velX2 = agents[j].getVelX();
-				int velY2 = agents[j].getVelY();
 				
 				
 				// check if agents are within 1 unit of each other
-				if (Math.abs(x1-x2) <= 1 && Math.abs(y1-y2) <= 1) {
+				if (Math.abs(x1-x2) <= 2 && Math.abs(y1-y2) <= 2) {
 					
-					// check if they are moving in the same direction
-					if (velX1 == velX2 && velY1 == velY2) {
+					// check if agent 1 is moving horizontally
+					if (velX1 != 0) {
 						
-						// check if both moving horizontal
-						if (velX1 != 0 && velY1 == 0) {
-							
-							// check if both moving left
-							if (velX1 < 0) {
-								
-								// agent 1 right of agent 2
-								if (x1 > x2) {
-									agents[i].divertPath(new Coordinate(x1+1, y1)); // divert agent 1, 1 unit right
-								} 
-								
-								// agent 2 right of agent 1
-								else {
-									agents[j].divertPath(new Coordinate(x2+1, y1)); // divert agent 2, 1 unit right
-								}
-							} 
-							
-							// check if both moving right
-							else if (velX1 > 0) {
-								
-								// agent 1 left of agent 2
-								if (x1 < x2) {
-									agents[i].divertPath(new Coordinate(x1-1, y1)); // divert agent 1, 1 unit left
-								}
-								
-								// agent 2 behind agent 1
-								else {
-									agents[j].divertPath(new Coordinate(x2-1, y2)); // divert agent 2, 1 unit left
-								}
-							} else {
-								System.out.println("not moving");
-							}
+						// check if also moving vertically (diagonal case)
+						if (velY1 != 0) {
+							agents[i].divertPath(new Coordinate(x1+2, y1)); // divert to the right
 						}
 						
-						// check if both moving vertical
-						else if (velY1 != 0 && velX1 == 0) {
-							
-							// check if both moving up
-							if (velY1 < 0) {
-								
-								// agent 1 below of agent 2
-								if (y1 > y2) {
-									agents[i].divertPath(new Coordinate(x1, y1+1)); // divert agent 1, 1 unit down
-								} 
-								
-								// agent 2 below of agent 1
-								else {
-									agents[j].divertPath(new Coordinate(x2, y2+1)); // divert agent 2, 1 unit down
-								}
-							} 
-							
-							// check if both moving down
-							else if (velY1 > 0) {
-								
-								// agent 1 above of agent 2
-								if (y1 < y2) {
-									agents[i].divertPath(new Coordinate(x1, y1-1)); // divert agent 1, 1 unit up
-								} 
-								
-								// agent 2 above of agent 1
-								else {
-									agents[j].divertPath(new Coordinate(x2, y2-1)); // divert agent 2, 1 unit up
-								}
-							} else {
-								System.out.println("not moving");
-							}
-						}
-						
-						// check if diagonal
+						// (horizontal only case)
 						else {
-							
+							agents[i].divertPath(new Coordinate(x1, y1-2)); //divert up
 						}
 					}
 					
-					// if they are moving in opposite directions
-					else if (velX1 == -velX2 && velY1 == -velY2) {
-						// insert new coordinate for both agents so they go around each other
+					// check if agent 1 is moving vertically (vertical case)
+					else if (velY1 != 0) {
+						agents[i].divertPath(new Coordinate(x1+2, y1)); // divert to the right
+					}
+					
+					// non moving collision
+					else {
+						System.out.println("error: not moving");
 					}
 				}
 			}

@@ -220,7 +220,7 @@ public class Agent {
 		this.path.add(currentTarget); // add current target to path again
 		this.currentTarget = c; // change current target to diverting path
 		this.setDirection(); // change direction according to new target
-		move();
+//		move();
 	}
 	
 	public String getPublicBroadcast () {
