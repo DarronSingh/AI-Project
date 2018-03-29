@@ -63,12 +63,15 @@ public class Simulation extends JPanel {
 				if (agents[i].getAgentID() == agents[j].getAgentID())
 					continue;
 				
+				// remove if necessary
+				if (agents[i].isDiverting || agents[j].isDiverting)
+					continue;
+				
 				// get center radius, coordinates, velocities
-				int radius = agents[i].getRadius();
-				int x1 = agents[i].getX()+radius;
-				int y1 = agents[i].getY()+radius;
-				int x2 = agents[j].getX()+radius;
-				int y2 = agents[j].getY()+radius;
+				int x1 = agents[i].getX();
+				int y1 = agents[i].getY();
+				int x2 = agents[j].getX();
+				int y2 = agents[j].getY();
 				int velX1 = agents[i].getVelX();
 				int velY1 = agents[i].getVelY();
 				int velX2 = agents[j].getVelX();
@@ -77,8 +80,6 @@ public class Simulation extends JPanel {
 				
 				// check if agents are within 1 unit of each other
 				if (Math.abs(x1-x2) <= 1 && Math.abs(y1-y2) <= 1) {
-					
-					System.out.println(agents[i].getColor() + "(" + x1 + ", " + y1 +") touching " + agents[j].getColor() + "(" + x1 + ", " + y1 +")");
 					
 					// check if they are moving in the same direction
 					if (velX1 == velX2 && velY1 == velY2) {
@@ -92,44 +93,62 @@ public class Simulation extends JPanel {
 								// agent 1 right of agent 2
 								if (x1 > x2) {
 									agents[i].divertPath(new Coordinate(x1+1, y1)); // divert agent 1, 1 unit right
-									System.out.println("Diverted " + agents[i].getColor() + " 1 unit right");
 								} 
 								
 								// agent 2 right of agent 1
 								else {
-									agents[j].divertPath(new Coordinate(x2+1, y2)); // divert agent 2, 1 unit right
-									System.out.println("Diverted " + agents[j].getColor() + " 1 unit right");
+									agents[j].divertPath(new Coordinate(x2+1, y1)); // divert agent 2, 1 unit right
 								}
-								
 							} 
 							
 							// check if both moving right
-							else {
+							else if (velX1 > 0) {
 								
 								// agent 1 left of agent 2
 								if (x1 < x2) {
 									agents[i].divertPath(new Coordinate(x1-1, y1)); // divert agent 1, 1 unit left
-									System.out.println("Diverted " + agents[i].getColor() + " 1 unit left");
 								}
 								
 								// agent 2 behind agent 1
 								else {
 									agents[j].divertPath(new Coordinate(x2-1, y2)); // divert agent 2, 1 unit left
-									System.out.println("Diverted " + agents[j].getColor() + " 1 unit left");
 								}
+							} else {
+								System.out.println("not moving");
 							}
 						}
 						
 						// check if both moving vertical
 						else if (velY1 != 0 && velX1 == 0) {
-							if (velY1 < 0) { // both up
+							
+							// check if both moving up
+							if (velY1 < 0) {
 								
-								System.out.println("both up");
+								// agent 1 below of agent 2
+								if (y1 > y2) {
+									agents[i].divertPath(new Coordinate(x1, y1+1)); // divert agent 1, 1 unit down
+								} 
 								
-							} else { // both down
+								// agent 2 below of agent 1
+								else {
+									agents[j].divertPath(new Coordinate(x2, y2+1)); // divert agent 2, 1 unit down
+								}
+							} 
+							
+							// check if both moving down
+							else if (velY1 > 0) {
 								
-								System.out.println("both down");
+								// agent 1 above of agent 2
+								if (y1 < y2) {
+									agents[i].divertPath(new Coordinate(x1, y1-1)); // divert agent 1, 1 unit up
+								} 
 								
+								// agent 2 above of agent 1
+								else {
+									agents[j].divertPath(new Coordinate(x2, y2-1)); // divert agent 2, 1 unit up
+								}
+							} else {
+								System.out.println("not moving");
 							}
 						}
 						
@@ -144,9 +163,6 @@ public class Simulation extends JPanel {
 						// insert new coordinate for both agents so they go around each other
 					}
 				}
-				
-				agents[i].setDirection();
-				agents[j].setDirection();
 			}
 		}
 	}
@@ -201,6 +217,7 @@ public class Simulation extends JPanel {
 					agents[i].resetPublicBroadcast(); // clear broadcast
 				}
 				
+				// check if private broadcast exists
 				if (agents[i].getPrivateaBroadcast() != "") {
 					// handle private broadcasts
 					agents[i].resetPrivateaBroadcast(); // clear broadcast
@@ -228,20 +245,25 @@ public class Simulation extends JPanel {
 	}
 	
 	public static void main(String args[]) throws InterruptedException {
+			
 		JFrame frame = new JFrame(SIMNAME);
-		Simulation sim = new Simulation();
-		frame.add(sim);
-		frame.setSize(FRAMEX+15, FRAMEY+40); // offset so all cells show in window
-		frame.setResizable(false);
-		frame.setLocationRelativeTo(null);
-		frame.setAlwaysOnTop(true);
-		frame.setVisible(true);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		while(sim.isSimulating) {
-			sim.update();
-			sim.repaint();
-			Thread.sleep(100);
+		while (true) { ///////////////////////////////////////// remove
+			
+			Simulation sim = new Simulation();
+			frame.add(sim);
+			frame.setSize(FRAMEX+15, FRAMEY+40); // offset so all cells show in window
+			frame.setResizable(false);
+			frame.setLocation(900, 0);
+			frame.setAlwaysOnTop(true);
+			frame.setVisible(true);
+			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			
+			while(sim.isSimulating) {
+				sim.update();
+				sim.repaint();
+				Thread.sleep(40);
+			}
 		}
 	}
 }

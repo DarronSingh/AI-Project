@@ -10,7 +10,7 @@ public class Agent {
 	private int x, y, radius, velX, velY;
 	private int frameX, frameY;
 	private String color, publicBroadcast, privateBroadcast;
-	boolean isActive;
+	boolean isActive, isDiverting;
 	
 	private ArrayList<Node> targets = new ArrayList<Node>();
 	private Stack<Coordinate> path = new Stack<Coordinate>();
@@ -113,8 +113,10 @@ public class Agent {
 				publicBroadcast = "done path";
 				isActive = false;
 			} else {
-				// get next in line, remove it from queue
+				// get next in line, pop it from stack
 				currentTarget = path.pop();
+				if (isDiverting)
+					isDiverting = false;
 			}
 		}		
 		setDirection(); // set the direction
@@ -189,6 +191,10 @@ public class Agent {
 		return velY;
 	}
 	
+	public String locationToString() {
+		return "(" + String.valueOf(x) + ", " + String.valueOf(y) + ")";
+	}
+	
 	public void setVelX(int velX) {
 		this.velX = velX;
 	}
@@ -210,8 +216,11 @@ public class Agent {
 	}
 	
 	public void divertPath(Coordinate c) {
-		path.add(currentTarget); // add current target to path again
-		currentTarget = c; // change current target to diverting path
+		isDiverting = true;
+		this.path.add(currentTarget); // add current target to path again
+		this.currentTarget = c; // change current target to diverting path
+		this.setDirection(); // change direction according to new target
+		move();
 	}
 	
 	public String getPublicBroadcast () {
