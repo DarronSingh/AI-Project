@@ -1,8 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.Stack;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Agent {
@@ -14,7 +13,7 @@ public class Agent {
 	boolean isActive;
 	
 	private ArrayList<Node> targets = new ArrayList<Node>();
-	private Queue<Coordinate> path = new LinkedList<Coordinate>();
+	private Stack<Coordinate> path = new Stack<Coordinate>();
 	private Coordinate currentTarget;
 	
 	public Agent(int agentID, int frameX, int frameY) {
@@ -38,55 +37,55 @@ public class Agent {
 	}
 	
 	public void setupPath() {
-		// create path, define start and end
+		// set color and create path in reverse
 		switch (agentID) {
 		case 0:
 			color = "GREEN";
-			currentTarget = new Coordinate(0, 0); // start
+			currentTarget = new Coordinate(0, 0); // set start
+			path.push(new Coordinate(0, 0)); // end
 			generatePath();
-			path.add(new Coordinate(0, 0)); // end
 			break;
 		case 1:
 			color = "BLUE";
-			currentTarget = new Coordinate(0, 20); // start
+			currentTarget = new Coordinate(0, 20); // set start
+			path.push(new Coordinate(0, 20)); // end
 			generatePath();
-			path.add(new Coordinate(0, 20)); // end
 			break;
 		case 2:
 			color = "BLACK";
-			currentTarget = new Coordinate(0, 40); // start
+			currentTarget = new Coordinate(0, 40); // set start
+			path.push(new Coordinate(0, 40)); // end
 			generatePath();
-			path.add(new Coordinate(0, 40)); // end
 			break;
 		case 3:
 			color = "ORANGE";
-			currentTarget = new Coordinate(0, 60); // start
-			generatePath();
+			currentTarget = new Coordinate(0, 60); // set start
 			path.add(new Coordinate(0, 60)); // end
+			generatePath();
 			break;
 		case 4:
 			color = "RED";
 			currentTarget = new Coordinate(0, 80); // start
-			generatePath();
 			path.add(new Coordinate(0, 80)); // end
+			generatePath();
 			break;
 		}
 	}
 	
 	public void generatePath() {
-		// generate the middle section of the path
-		path.add(new Coordinate(0, 80)); // bottom left
-		path.add(new Coordinate(80, 80));
-		path.add(new Coordinate(80, 60));
-		path.add(new Coordinate(20, 60));
-		path.add(new Coordinate(20, 40));
-		path.add(new Coordinate(80, 40));
-		path.add(new Coordinate(80, 20));
-		path.add(new Coordinate(20, 20));
-		path.add(new Coordinate(20, 10));
-		path.add(new Coordinate(80, 10));
-		path.add(new Coordinate(80, 0));
+		// path in reverse
 		path.add(new Coordinate(0, 0)); // top left
+		path.add(new Coordinate(80, 0));
+		path.add(new Coordinate(80, 10));
+		path.add(new Coordinate(20, 10));
+		path.add(new Coordinate(20, 20));
+		path.add(new Coordinate(80, 20));
+		path.add(new Coordinate(80, 40));
+		path.add(new Coordinate(20, 40));
+		path.add(new Coordinate(20, 60));
+		path.add(new Coordinate(80, 60));
+		path.add(new Coordinate(80, 80));
+		path.add(new Coordinate(0, 80)); // bottom left
 	}
 	
 	public void setDirection() {
@@ -115,7 +114,7 @@ public class Agent {
 				isActive = false;
 			} else {
 				// get next in line, remove it from queue
-				currentTarget = path.remove();
+				currentTarget = path.pop();
 			}
 		}		
 		setDirection(); // set the direction
@@ -159,7 +158,7 @@ public class Agent {
 		g2d.drawOval(x*10, y*10, 2*radius*10-2, 2*radius*10-2);
 		
 		// draw agent
-		g2d.fillRect(x*10+(2*radius*10/2), y*10+(2*radius*10/2), 5, 5);
+		g2d.fillRect(x*10+(2*radius*10/2)-radius/2, y*10+(2*radius*10/2)-radius/2, 10, 10);
 	}
 	
 	public int getAgentID() {
@@ -204,6 +203,15 @@ public class Agent {
 	
 	public void addTarget(Node target) {
 		targets.add(target);
+	}
+	
+	public void addPath(Coordinate c) {
+		path.add(c);
+	}
+	
+	public void divertPath(Coordinate c) {
+		path.add(currentTarget); // add current target to path again
+		currentTarget = c; // change current target to diverting path
 	}
 	
 	public String getPublicBroadcast () {

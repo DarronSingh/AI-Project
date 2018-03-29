@@ -58,31 +58,96 @@ public class Simulation extends JPanel {
 	public void detectAgentCollision() {
 		for (int i=0; i<agents.length; i++) {
 			for (int j=0; j<agents.length; j++) {
-				// get center coordinates
-				int cX1 = agents[i].getX()+agents[i].getRadius();
-				int cY1 = agents[i].getY()+agents[i].getRadius();
-				int cX2 = agents[j].getX()+agents[j].getRadius();
-				int cY2 = agents[j].getY()+agents[j].getRadius();
 				
-				// get distance squared and radius squared
-				int dSqr = (int) (Math.pow((cX2 - cX1), 2) + Math.pow((cY2 - cY1), 2));
-				int rSqr = (int) Math.pow(agents[i].getRadius() + agents[j].getRadius(), 2);
+				// don't check collision with self
+				if (agents[i].getAgentID() == agents[j].getAgentID())
+					continue;
 				
-				if (dSqr <= rSqr) {
-					// swap velocities
-					int tempVelX = agents[i].getVelX();
-					int tempVelY = agents[i].getVelY();
+				// get center radius, coordinates, velocities
+				int radius = agents[i].getRadius();
+				int x1 = agents[i].getX()+radius;
+				int y1 = agents[i].getY()+radius;
+				int x2 = agents[j].getX()+radius;
+				int y2 = agents[j].getY()+radius;
+				int velX1 = agents[i].getVelX();
+				int velY1 = agents[i].getVelY();
+				int velX2 = agents[j].getVelX();
+				int velY2 = agents[j].getVelY();
+				
+				
+				// check if agents are within 1 unit of each other
+				if (Math.abs(x1-x2) <= 1 && Math.abs(y1-y2) <= 1) {
 					
-					agents[i].setVelX(agents[j].getVelX());
-					agents[i].setVelY(agents[j].getVelY());
-//					agents[i].move();
+					System.out.println(agents[i].getColor() + "(" + x1 + ", " + y1 +") touching " + agents[j].getColor() + "(" + x1 + ", " + y1 +")");
 					
-					agents[j].setVelX(tempVelX);
-					agents[j].setVelY(tempVelY);
-//					agents[j].move();
+					// check if they are moving in the same direction
+					if (velX1 == velX2 && velY1 == velY2) {
+						
+						// check if both moving horizontal
+						if (velX1 != 0 && velY1 == 0) {
+							
+							// check if both moving left
+							if (velX1 < 0) {
+								
+								// agent 1 right of agent 2
+								if (x1 > x2) {
+									agents[i].divertPath(new Coordinate(x1+1, y1)); // divert agent 1, 1 unit right
+									System.out.println("Diverted " + agents[i].getColor() + " 1 unit right");
+								} 
+								
+								// agent 2 right of agent 1
+								else {
+									agents[j].divertPath(new Coordinate(x2+1, y2)); // divert agent 2, 1 unit right
+									System.out.println("Diverted " + agents[j].getColor() + " 1 unit right");
+								}
+								
+							} 
+							
+							// check if both moving right
+							else {
+								
+								// agent 1 left of agent 2
+								if (x1 < x2) {
+									agents[i].divertPath(new Coordinate(x1-1, y1)); // divert agent 1, 1 unit left
+									System.out.println("Diverted " + agents[i].getColor() + " 1 unit left");
+								}
+								
+								// agent 2 behind agent 1
+								else {
+									agents[j].divertPath(new Coordinate(x2-1, y2)); // divert agent 2, 1 unit left
+									System.out.println("Diverted " + agents[j].getColor() + " 1 unit left");
+								}
+							}
+						}
+						
+						// check if both moving vertical
+						else if (velY1 != 0 && velX1 == 0) {
+							if (velY1 < 0) { // both up
+								
+								System.out.println("both up");
+								
+							} else { // both down
+								
+								System.out.println("both down");
+								
+							}
+						}
+						
+						// check if diagonal
+						else {
+							
+						}
+					}
+					
+					// if they are moving in opposite directions
+					else if (velX1 == -velX2 && velY1 == -velY2) {
+						// insert new coordinate for both agents so they go around each other
+					}
 				}
+				
+				agents[i].setDirection();
+				agents[j].setDirection();
 			}
-			agents[i].move();
 		}
 	}
 	
@@ -109,7 +174,7 @@ public class Simulation extends JPanel {
 	}
 
 	public void update() {
-//		detectAgentCollision(); // fix this
+		detectAgentCollision();
 		detectTargetCollision();
 		
 		// loop through all agents
@@ -176,7 +241,7 @@ public class Simulation extends JPanel {
 		while(sim.isSimulating) {
 			sim.update();
 			sim.repaint();
-			Thread.sleep(30);
+			Thread.sleep(100);
 		}
 	}
 }
