@@ -113,8 +113,8 @@ public class Simulation extends JPanel {
 			for (int i=0; i<SIZE; i++) {
 				for (int j=0; j<SIZE; j++) {
 					if (nodes[i][j].getAgentID() == agents[k].getAgentID()) {
-						int aX = agents[k].getX()+agents[k].getRadius();
-						int aY = agents[k].getY()+agents[k].getRadius();
+						int aX = agents[k].getX();
+						int aY = agents[k].getY();
 						int tX = nodes[i][j].getX();
 						int tY = nodes[i][j].getY();
 						
@@ -149,17 +149,11 @@ public class Simulation extends JPanel {
 			// check for win condition, on win stop simulation
 			if (a.getBroadcast().body.equals("won")) {
 				a.clearBroadcast();
+				wins++;
 				System.out.println(String.valueOf("Agent: " + a.getAgentID()) + " (" + a.getColor() +") found all targets.");
 				
-				// check for scenario 1, all agents must win
-				if (mode == 1) {
-					wins++;
-					if (wins == agents.length)
-						isSimulating = false;
-				}
-				
-				// scenario 0 and 2, only 1 agent has to win
-				else
+				// scenario 1 = 5 wins, else 1 win
+				if ((mode == 1 && wins == agents.length) || mode != 1)
 					isSimulating = false;
 			}
 			
@@ -190,7 +184,7 @@ public class Simulation extends JPanel {
 	
 	public static void main(String args[]) throws InterruptedException {
 		
-		mode = 1;
+		mode = 0;
 		
 		JFrame frame = new JFrame(SIMNAME);
 		Simulation sim = new Simulation();
@@ -208,6 +202,6 @@ public class Simulation extends JPanel {
 			Thread.sleep(25);
 		}
 		
-		System.out.println("Simulation complete - scenario " + mode);
+		System.out.println("Simulation complete in scenario " + mode);
 	}
 }

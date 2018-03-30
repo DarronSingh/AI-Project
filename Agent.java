@@ -44,31 +44,31 @@ public class Agent {
 		case 0:
 			color = "GREEN";
 			currentTarget = new Coordinate(0, 0); // set start
-			path.push(new Coordinate(0, 0)); // end
+			path.push(new Coordinate(0, 10)); // end
 			generatePath();
 			break;
 		case 1:
 			color = "BLUE";
 			currentTarget = new Coordinate(0, 20); // set start
-			path.push(new Coordinate(0, 20)); // end
+			path.push(new Coordinate(0, 30)); // end
 			generatePath();
 			break;
 		case 2:
 			color = "BLACK";
 			currentTarget = new Coordinate(0, 40); // set start
-			path.push(new Coordinate(0, 40)); // end
+			path.push(new Coordinate(0, 50)); // end
 			generatePath();
 			break;
 		case 3:
 			color = "ORANGE";
 			currentTarget = new Coordinate(0, 60); // set start
-			path.add(new Coordinate(0, 60)); // end
+			path.add(new Coordinate(0, 70)); // end
 			generatePath();
 			break;
 		case 4:
 			color = "RED";
 			currentTarget = new Coordinate(0, 80); // start
-			path.add(new Coordinate(0, 80)); // end
+			path.add(new Coordinate(0, 90)); // end
 			generatePath();
 			break;
 		}
@@ -77,17 +77,17 @@ public class Agent {
 	public void generatePath() {
 		// add path to stack in reverse so we can unstack it normally
 		path.add(new Coordinate(0, 0)); // top left
-		path.add(new Coordinate(80, 0));
-		path.add(new Coordinate(80, 10));
-		path.add(new Coordinate(20, 10));
+		path.add(new Coordinate(100, 0));
+		path.add(new Coordinate(100, 20));
 		path.add(new Coordinate(20, 20));
-		path.add(new Coordinate(80, 20));
-		path.add(new Coordinate(80, 40));
 		path.add(new Coordinate(20, 40));
+		path.add(new Coordinate(100, 40));
+		path.add(new Coordinate(100, 60));
 		path.add(new Coordinate(20, 60));
-		path.add(new Coordinate(80, 60));
-		path.add(new Coordinate(80, 80));
-		path.add(new Coordinate(0, 80)); // bottom left
+		path.add(new Coordinate(20, 80));
+		path.add(new Coordinate(100, 80));
+		path.add(new Coordinate(100, 100));
+		path.add(new Coordinate(0, 100)); // bottom left
 	}
 	
 	public void setDirection() {
@@ -169,12 +169,12 @@ public class Agent {
 		
 		// scale up coordinates when drawing
 		// draw radar
-		g2d.drawOval(x*10, y*10, 2*radius*10, 2*radius*10);
-		g2d.drawOval(x*10, y*10, 2*radius*10-1, 2*radius*10-1);
-		g2d.drawOval(x*10, y*10, 2*radius*10-2, 2*radius*10-2);
+		g2d.drawOval(x*10-radius*10, y*10-radius*10, 2*radius*10, 2*radius*10);
+		g2d.drawOval(x*10-radius*10, y*10-radius*10, 2*radius*10-1, 2*radius*10-1);
+		g2d.drawOval(x*10-radius*10, y*10-radius*10, 2*radius*10-2, 2*radius*10-2);
 		
 		// draw agent
-		g2d.fillRect(x*10+(2*radius*10/2)-radius/2, y*10+(2*radius*10/2)-radius/2, 10, 10);
+		g2d.fillRect(x*10-radius/2, y*10-radius/2, 10, 10);
 	}
 	
 	public int getAgentID() {
