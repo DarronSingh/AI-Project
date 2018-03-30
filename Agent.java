@@ -1,6 +1,8 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Stack;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -9,11 +11,13 @@ public class Agent {
 	private int agentID;
 	private int x, y, radius, velX, velY;
 	private int frameX, frameY;
-	private String color, publicBroadcast, privateBroadcast;
-	boolean isActive, isDiverting;
+	private String color;
+	private Message broadcast;
+	boolean isActive, won, isDiverting;
 	
-	private ArrayList<Node> targets = new ArrayList<Node>();
-	private Stack<Coordinate> path = new Stack<Coordinate>();
+	private ArrayList<Node> targets = new ArrayList<Node>(); // found targets go here
+	private Stack<Coordinate> path = new Stack<Coordinate>(); // path coordinates go here
+	private Queue<Message> inbox = new LinkedList<Message>(); // direct messages go here
 	private Coordinate currentTarget;
 	
 	public Agent(int agentID, int frameX, int frameY) {
@@ -24,8 +28,6 @@ public class Agent {
 		spawn();
 		setupPath();
 		
-		publicBroadcast = "";
-		privateBroadcast = "";
 		System.out.println("Agent " + agentID + " created");
 		isActive = true;
 	}
@@ -73,7 +75,7 @@ public class Agent {
 	}
 	
 	public void generatePath() {
-		// path in reverse
+		// add path to stack in reverse so we can unstack it normally
 		path.add(new Coordinate(0, 0)); // top left
 		path.add(new Coordinate(80, 0));
 		path.add(new Coordinate(80, 10));
@@ -110,7 +112,7 @@ public class Agent {
 		// if we have reached the current target
 		if (x == currentTarget.getX() && y == currentTarget.getY()) {
 			if (path.isEmpty()) {
-				publicBroadcast = "done path";
+				broadcast = new Message(-1, "done path", new Coordinate(x, y));
 				isActive = false;
 			} else {
 				// get next in line, pop it from stack
@@ -126,11 +128,23 @@ public class Agent {
 		y+=velY;
 	}
 	
+	public void checkInbox() {
+		// if inbox isn't empty, add each new coordinate to path
+		if (!inbox.isEmpty()) {
+			for (int i=0; i<inbox.size(); i++) {
+				path.add(inbox.remove().coordinate);
+			}
+		}
+	}
+	
 	public void update() {
+		checkInbox();
 		move();
 		
-		if (targets.size() == 5)
-			publicBroadcast = "won";
+		if (!won && targets.size() == 5) {
+			broadcast = new Message(-1, "won", new Coordinate(x, y));
+			won = true;
+		}
 	}
 	
 	public void draw(Graphics2D g2d) {
@@ -220,23 +234,14 @@ public class Agent {
 		this.path.add(currentTarget); // add current target to path again
 		this.currentTarget = c; // change current target to diverting path
 		this.setDirection(); // change direction according to new target
-//		move();
 	}
 	
-	public String getPublicBroadcast () {
-		return publicBroadcast;
+	public Message getBroadcast() {
+		return broadcast;
 	}
 	
-	public String getPrivateaBroadcast () {
-		return privateBroadcast;
-	}
-	
-	public void resetPublicBroadcast () {
-		publicBroadcast = "";
-	}
-	
-	public void resetPrivateaBroadcast () {
-		privateBroadcast = "";
+	public void clearBroadcast() {
+		broadcast = null;
 	}
 	
 	public String getColor() {

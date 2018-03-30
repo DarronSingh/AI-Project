@@ -14,6 +14,7 @@ public class Simulation extends JPanel {
 	private static final int FRAMEX = 1000, FRAMEY = 1000, SIZE = 100;
 	private static final String SIMNAME = "Simulation v1.0";
 	public boolean isSimulating;
+	private static int mode, wins; // scenario and win count
 	
 	private static Node[][] nodes = new Node[SIZE][SIZE];
 	private static Agent[] agents = new Agent[5];
@@ -22,7 +23,7 @@ public class Simulation extends JPanel {
 		setup();
 		setFocusable(true);
 		isSimulating = true;
-		System.out.println("Simulation started");
+		System.out.println("Simulation started in scenario " + mode);
 	}
 	
 	public void setup() {
@@ -63,7 +64,7 @@ public class Simulation extends JPanel {
 				if (agents[i].getAgentID() == agents[j].getAgentID())
 					continue;
 				
-				// if it already diverting, leave alone
+				// if its already diverting, leave alone
 				if (agents[i].isDiverting || agents[j].isDiverting)
 					continue;
 				
@@ -135,33 +136,36 @@ public class Simulation extends JPanel {
 		
 		// loop through all agents
 		for (int i=0; i<agents.length; i++) {
-			
-			// check if the agent is still active
 			if (agents[i].isActive) {
-				agents[i].update(); // update the agent
+				checkBroadcast(agents[i]);
+				agents[i].update();
+			}
+		}
+	}
+	
+	public void checkBroadcast(Agent a) {
+		if (a.getBroadcast() != null) {
+			
+			// check for win condition, on win stop simulation
+			if (a.getBroadcast().body.equals("won")) {
+				a.clearBroadcast();
+				System.out.println(String.valueOf("Agent: " + a.getAgentID()) + " (" + a.getColor() +") found all targets.");
 				
-				// check if public broadcast exists
-				if (agents[i].getPublicBroadcast() != "") {
-					
-					// check for win condition
-					if (agents[i].getPublicBroadcast().equals("won")) {
-						System.out.println(String.valueOf("Agent: " + agents[i].getAgentID()) + " (" + agents[i].getColor() +") won!");
+				// check for scenario 1, all agents must win
+				if (mode == 1) {
+					wins++;
+					if (wins == agents.length)
 						isSimulating = false;
-					}
-					
-					// check for path completion
-					else if (agents[i].getPublicBroadcast().equals("done path")) {
-						System.out.println(String.valueOf("Agent: " + agents[i].getAgentID()) + " (" + agents[i].getColor() +") has comepleted it's path.");
-					}
-					
-					agents[i].resetPublicBroadcast(); // clear broadcast
 				}
 				
-				// check if private broadcast exists
-				if (agents[i].getPrivateaBroadcast() != "") {
-					// handle private broadcasts
-					agents[i].resetPrivateaBroadcast(); // clear broadcast
-				}
+				// scenario 0 and 2, only 1 agent has to win
+				else
+					isSimulating = false;
+			}
+			
+			// check for path completion
+			else if (a.getBroadcast().body.equals("done path")) {
+				System.out.println(String.valueOf("Agent: " + a.getAgentID()) + " (" + a.getColor() +") has comepleted it's path.");
 			}
 		}
 	}
@@ -185,25 +189,25 @@ public class Simulation extends JPanel {
 	}
 	
 	public static void main(String args[]) throws InterruptedException {
-			
-		JFrame frame = new JFrame(SIMNAME);
 		
-		while (true) { ///////////////////////////////////////// remove
-			
-			Simulation sim = new Simulation();
-			frame.add(sim);
-			frame.setSize(FRAMEX+15, FRAMEY+40); // offset so all cells show in window
-			frame.setResizable(false);
-			frame.setLocation(900, 0);
-			frame.setAlwaysOnTop(true);
-			frame.setVisible(true);
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			
-			while(sim.isSimulating) {
-				sim.update();
-				sim.repaint();
-				Thread.sleep(40);
-			}
+		mode = 1;
+		
+		JFrame frame = new JFrame(SIMNAME);
+		Simulation sim = new Simulation();
+		frame.add(sim);
+		frame.setSize(FRAMEX+15, FRAMEY+40); // offset so all cells show in window
+		frame.setResizable(false);
+		frame.setLocation(900, 0);
+		frame.setAlwaysOnTop(true);
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		while(sim.isSimulating) {
+			sim.update();
+			sim.repaint();
+			Thread.sleep(25);
 		}
+		
+		System.out.println("Simulation complete - scenario " + mode);
 	}
 }
