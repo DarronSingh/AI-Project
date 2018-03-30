@@ -85,18 +85,18 @@ public class Simulation extends JPanel {
 						
 						// check if also moving vertically (diagonal case)
 						if (velY1 != 0) {
-							agents[i].divertPath(new Coordinate(x1+2, y1)); // divert to the right
+							agents[i].divertPath(new Coordinate(x1+5, y1)); // divert to the right
 						}
 						
 						// (horizontal only case)
 						else {
-							agents[i].divertPath(new Coordinate(x1, y1-2)); //divert up
+							agents[i].divertPath(new Coordinate(x1, y1-5)); //divert up
 						}
 					}
 					
 					// check if agent 1 is moving vertically (vertical case)
 					else if (velY1 != 0) {
-						agents[i].divertPath(new Coordinate(x1+2, y1)); // divert to the right
+						agents[i].divertPath(new Coordinate(x1+5, y1)); // divert to the right
 					}
 					
 					// non moving collision
@@ -112,7 +112,12 @@ public class Simulation extends JPanel {
 		for (int k=0; k<agents.length; k++) {
 			for (int i=0; i<SIZE; i++) {
 				for (int j=0; j<SIZE; j++) {
+					
+					// if target belongs to this agent
 					if (nodes[i][j].getAgentID() == agents[k].getAgentID()) {
+						
+						// add found flag if not already there ///////////////////////////////
+						
 						int aX = agents[k].getX();
 						int aY = agents[k].getY();
 						int tX = nodes[i][j].getX();
@@ -124,6 +129,13 @@ public class Simulation extends JPanel {
 							nodes[i][j].clearTarget(); // remove targetID and agentID
 							continue;
 						}
+					}
+					
+					// if target belongs to another agent
+					else {
+						// if already found, leave it
+						// else, add found flag
+						// create private broadcast and send to agent with the same id
 					}
 				}
 			}
