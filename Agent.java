@@ -128,11 +128,26 @@ public class Agent {
 		y+=velY;
 	}
 	
+	// if 2 agents collide, 1 diverts
+	public void divertPath(Coordinate c) {
+		isDiverting = true;
+		path.add(currentTarget); // add current target to path again
+		currentTarget = c; // change current target to diverting path
+		setDirection(); // change direction according to new target
+	}
+	
+	// if agent learns of a target location, sidetrack
+	public void sideTrack(Coordinate c) {
+		path.add(currentTarget); // add current target to path again
+//		path.add(new Coordinate(x, y)); // add current location to path
+		currentTarget = c; // change current target to target that was given
+		setDirection();
+	}
+	
 	public void checkInbox() {
-		// if inbox isn't empty, add each new coordinate to path
+		// if inbox isn't empty, side track current path to new target
 		if (!inbox.isEmpty()) {
 			for (int i=0; i<inbox.size(); i++) {
-				System.out.println(inbox.peek().toString());
 				sideTrack(inbox.remove().coordinate);
 			}
 		}
@@ -232,22 +247,6 @@ public class Agent {
 	
 	public void addPath(Coordinate c) {
 		path.add(c);
-	}
-	
-	// if 2 agents collide, 1 diverts
-	public void divertPath(Coordinate c) {
-		isDiverting = true;
-		path.add(currentTarget); // add current target to path again
-		currentTarget = c; // change current target to diverting path
-		setDirection(); // change direction according to new target
-	}
-	
-	// if agent learns of a target location, sidetrack
-	public void sideTrack(Coordinate c) {
-		path.add(currentTarget); // add current target to path again
-//		path.add(new Coordinate(x, y)); // add current location to path
-		currentTarget = c; // change current target to target that was given
-		setDirection();
 	}
 	
 	public Message getBroadcast() {

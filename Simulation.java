@@ -208,7 +208,7 @@ public class Simulation extends JPanel {
 		
 		mode = 1;
 		
-		JFrame frame = new JFrame(SIMNAME);
+		JFrame frame = new JFrame(SIMNAME + " - scenario " + (mode+1));
 		Simulation sim = new Simulation();
 		frame.add(sim);
 		frame.setSize(FRAMEX+15, FRAMEY+40); // offset so all cells show in window
@@ -221,7 +221,7 @@ public class Simulation extends JPanel {
 		while(sim.isSimulating) {
 			sim.update();
 			sim.repaint();
-			Thread.sleep(100);
+			Thread.sleep(25);
 		}
 		
 		System.out.println("Simulation complete in scenario " + mode);
