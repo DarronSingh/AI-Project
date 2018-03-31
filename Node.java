@@ -5,6 +5,7 @@ public class Node {
 
 	private int x, y, width; // scaled down coordinates
 	private int agentID, targetID; // if -1, not a target
+	private boolean isFound = false;
 
 	public Node(int x, int y, int frameX, int frameY) {
 		this.x = x;
@@ -70,5 +71,13 @@ public class Node {
 	public void clearTarget() {
 		agentID = -1;
 		targetID = -1;
+	}
+	
+	public void setIsFound(boolean isFound) {
+		this.isFound = isFound;
+	}
+	
+	public boolean getIsFound() {
+		return isFound;
 	}
 }

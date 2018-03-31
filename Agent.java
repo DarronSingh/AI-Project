@@ -132,7 +132,8 @@ public class Agent {
 		// if inbox isn't empty, add each new coordinate to path
 		if (!inbox.isEmpty()) {
 			for (int i=0; i<inbox.size(); i++) {
-				path.add(inbox.remove().coordinate);
+				System.out.println(inbox.peek().toString());
+				sideTrack(inbox.remove().coordinate);
 			}
 		}
 	}
@@ -205,6 +206,10 @@ public class Agent {
 		return velY;
 	}
 	
+	public String getColor() {
+		return color;
+	}
+	
 	public String locationToString() {
 		return "(" + String.valueOf(x) + ", " + String.valueOf(y) + ")";
 	}
@@ -229,11 +234,20 @@ public class Agent {
 		path.add(c);
 	}
 	
+	// if 2 agents collide, 1 diverts
 	public void divertPath(Coordinate c) {
 		isDiverting = true;
-		this.path.add(currentTarget); // add current target to path again
-		this.currentTarget = c; // change current target to diverting path
-		this.setDirection(); // change direction according to new target
+		path.add(currentTarget); // add current target to path again
+		currentTarget = c; // change current target to diverting path
+		setDirection(); // change direction according to new target
+	}
+	
+	// if agent learns of a target location, sidetrack
+	public void sideTrack(Coordinate c) {
+		path.add(currentTarget); // add current target to path again
+//		path.add(new Coordinate(x, y)); // add current location to path
+		currentTarget = c; // change current target to target that was given
+		setDirection();
 	}
 	
 	public Message getBroadcast() {
@@ -244,7 +258,7 @@ public class Agent {
 		broadcast = null;
 	}
 	
-	public String getColor() {
-		return color;
+	public void addMessage(Message m) {
+		inbox.add(m);
 	}
 }

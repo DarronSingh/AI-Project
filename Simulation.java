@@ -14,7 +14,7 @@ public class Simulation extends JPanel {
 	private static final int FRAMEX = 1000, FRAMEY = 1000, SIZE = 100;
 	private static final String SIMNAME = "Simulation v1.0";
 	public boolean isSimulating;
-	private static int mode, wins; // scenario and win count
+	private static int mode, wins;
 	
 	private static Node[][] nodes = new Node[SIZE][SIZE];
 	private static Agent[] agents = new Agent[5];
@@ -113,29 +113,39 @@ public class Simulation extends JPanel {
 			for (int i=0; i<SIZE; i++) {
 				for (int j=0; j<SIZE; j++) {
 					
+					// get values for calculation
+					int aX = agents[k].getX();
+					int aY = agents[k].getY();
+					int tX = nodes[i][j].getX();
+					int tY = nodes[i][j].getY();
+					boolean isWithinRadius = false;
+					
+					// calculate if target is within agent's search radius
+					if (Math.pow(tX - aX, 2) + Math.pow(tY - aY, 2) <= Math.pow(agents[k].getRadius(), 2))
+						isWithinRadius = true;
+					else
+						continue;
+					
 					// if target belongs to this agent
 					if (nodes[i][j].getAgentID() == agents[k].getAgentID()) {
 						
-						// add found flag if not already there ///////////////////////////////
-						
-						int aX = agents[k].getX();
-						int aY = agents[k].getY();
-						int tX = nodes[i][j].getX();
-						int tY = nodes[i][j].getY();
-						
-						if (Math.pow(tX - aX, 2) + Math.pow(tY - aY, 2) <= Math.pow(agents[k].getRadius(), 2)) {
+						// check if target is within search radius
+						if (isWithinRadius) {
 							System.out.println("Agent: " + agents[k].getAgentID() + " (" + agents[k].getColor() +") found Target: " + nodes[i][j].getTargetID());
 							agents[k].addTarget(nodes[i][j]); // add to list of targets
 							nodes[i][j].clearTarget(); // remove targetID and agentID
-							continue;
+							nodes[i][j].setIsFound(true);
 						}
 					}
 					
-					// if target belongs to another agent
-					else {
-						// if already found, leave it
-						// else, add found flag
-						// create private broadcast and send to agent with the same id
+					// if in mode 1 or 2, if there is still a target there, but belongs to a different agent
+					else if (mode != 0 && nodes[i][j].getAgentID() != -1) {
+						
+						// check if target is within search radius and is not already found
+						if (isWithinRadius && !nodes[i][j].getIsFound()) {
+							nodes[i][j].setIsFound(true);
+							agents[nodes[i][j].getAgentID()].addMessage(new Message(nodes[i][j].getAgentID(), "target found", new Coordinate(nodes[i][j].getX(), nodes[i][j].getY())));
+						}
 					}
 				}
 			}
@@ -196,14 +206,14 @@ public class Simulation extends JPanel {
 	
 	public static void main(String args[]) throws InterruptedException {
 		
-		mode = 0;
+		mode = 1;
 		
 		JFrame frame = new JFrame(SIMNAME);
 		Simulation sim = new Simulation();
 		frame.add(sim);
 		frame.setSize(FRAMEX+15, FRAMEY+40); // offset so all cells show in window
 		frame.setResizable(false);
-		frame.setLocation(900, 0);
+		frame.setLocation(900, 0); // moved window to right to see command window
 		frame.setAlwaysOnTop(true);
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -211,7 +221,7 @@ public class Simulation extends JPanel {
 		while(sim.isSimulating) {
 			sim.update();
 			sim.repaint();
-			Thread.sleep(25);
+			Thread.sleep(100);
 		}
 		
 		System.out.println("Simulation complete in scenario " + mode);
