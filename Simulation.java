@@ -17,7 +17,8 @@ public class Simulation extends JPanel {
 	private static final String SIMNAME = "Simulation v1.0";
 	private static final DecimalFormat TIMEFORMAT = new DecimalFormat("#.00");
 	public boolean isSimulating;
-	private static int mode, wins, mostFound;
+	private static int wins, mostFound;
+	public static int mode;
 	
 	private Node[][] nodes = new Node[SIZE][SIZE];
 	private Agent[] agents = new Agent[5];
@@ -235,7 +236,7 @@ public class Simulation extends JPanel {
 		
 		Scanner in = new Scanner(System.in);
 		int iterations, simSpeed;
-		double runtime, totalRuntime;
+		double totalRuntime;
 		
 		
 		// get scenario number

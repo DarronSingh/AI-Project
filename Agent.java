@@ -27,7 +27,7 @@ public class Agent {
 		radius = 10; // radar radius
 		numFound = stepCount = 0;
 		spawn();
-		setupPath();
+		setupPath(Simulation.mode);
 		
 //		System.out.println("Agent " + agentID + " created");
 		isActive = true;
@@ -39,56 +39,111 @@ public class Agent {
 		y = ThreadLocalRandom.current().nextInt(0, frameY/10-2*radius);
 	}
 	
-	public void setupPath() {
+	public void setupPath(int mode) {
 		// set color and create path in reverse
 		switch (agentID) {
 		case 0:
 			color = "GREEN";
-			currentTarget = new Coordinate(0, 0); // set start
-			path.push(new Coordinate(0, 10)); // end
-			generatePath();
+			if (mode == 0) {
+				currentTarget = new Coordinate(0, 0); // set mode 1 start
+				path.push(new Coordinate(0, 10)); // end
+			}
 			break;
 		case 1:
 			color = "BLUE";
-			currentTarget = new Coordinate(0, 20); // set start
-			path.push(new Coordinate(0, 30)); // end
-			generatePath();
+			if (mode == 0) {
+				currentTarget = new Coordinate(0, 20); // set mode 1start
+				path.push(new Coordinate(0, 30)); // end
+			}
 			break;
 		case 2:
 			color = "BLACK";
-			currentTarget = new Coordinate(0, 40); // set start
-			path.push(new Coordinate(0, 50)); // end
-			generatePath();
+			if (mode == 0) {
+				currentTarget = new Coordinate(0, 40); // set mode 1 start
+				path.push(new Coordinate(0, 50)); // end
+			}
 			break;
 		case 3:
 			color = "ORANGE";
-			currentTarget = new Coordinate(0, 60); // set start
-			path.add(new Coordinate(0, 70)); // end
-			generatePath();
+			if (mode == 0) {
+				currentTarget = new Coordinate(0, 60); // set mode 1 start
+				path.add(new Coordinate(0, 70)); // end
+			}
 			break;
 		case 4:
 			color = "RED";
-			currentTarget = new Coordinate(0, 80); // start
-			path.add(new Coordinate(0, 90)); // end
-			generatePath();
+			if (mode == 0) {
+				currentTarget = new Coordinate(0, 80); // start
+				path.add(new Coordinate(0, 90)); // end
+			}
 			break;
 		}
+		generatePath(Simulation.mode);
 	}
 	
-	public void generatePath() {
-		// add path to stack in reverse so we can unstack it normally
-		path.add(new Coordinate(0, 0)); // top left
-		path.add(new Coordinate(100, 0));
-		path.add(new Coordinate(100, 20));
-		path.add(new Coordinate(20, 20));
-		path.add(new Coordinate(20, 40));
-		path.add(new Coordinate(100, 40));
-		path.add(new Coordinate(100, 60));
-		path.add(new Coordinate(20, 60));
-		path.add(new Coordinate(20, 80));
-		path.add(new Coordinate(100, 80));
-		path.add(new Coordinate(100, 100));
-		path.add(new Coordinate(0, 100)); // bottom left
+	public void generatePath(int mode) {
+		
+		if (mode == 0) {
+			// add path to stack in reverse so we can unstack it normally
+			path.add(new Coordinate(0, 0)); // top left
+			path.add(new Coordinate(100, 0));
+			path.add(new Coordinate(100, 20));
+			path.add(new Coordinate(20, 20));
+			path.add(new Coordinate(20, 40));
+			path.add(new Coordinate(100, 40));
+			path.add(new Coordinate(100, 60));
+			path.add(new Coordinate(20, 60));
+			path.add(new Coordinate(20, 80));
+			path.add(new Coordinate(100, 80));
+			path.add(new Coordinate(100, 100));
+			path.add(new Coordinate(0, 100)); // bottom left
+		} 
+		
+		// scenario 2 and 3 path
+		else {
+			switch (agentID) {
+			case 0:
+				path.add(new Coordinate(0, 0));
+				path.add(new Coordinate(100, 0));
+				path.add(new Coordinate(100, 100));
+				path.add(new Coordinate(0, 100));
+				path.add(new Coordinate(90, 10)); // end
+				currentTarget = new Coordinate(10, 10); // start
+				break;
+			case 1:
+				path.add(new Coordinate(0, 100));
+				path.add(new Coordinate(0, 0));
+				path.add(new Coordinate(100, 0));
+				path.add(new Coordinate(100, 100));
+				path.add(new Coordinate(10, 30)); // end
+				currentTarget = new Coordinate(90, 30); // start
+				break;
+			case 2:
+				path.add(new Coordinate(100, 100));
+				path.add(new Coordinate(0, 100));
+				path.add(new Coordinate(0, 0));
+				path.add(new Coordinate(100, 0));
+				path.add(new Coordinate(90, 50)); // end
+				currentTarget = new Coordinate(10, 50); // start
+				break;
+			case 3:
+				path.add(new Coordinate(100, 0));
+				path.add(new Coordinate(100, 100));
+				path.add(new Coordinate(0, 100));
+				path.add(new Coordinate(0, 0));
+				path.add(new Coordinate(10, 70)); // end
+				currentTarget = new Coordinate(90, 70); // start
+				break;
+			case 4:
+				path.add(new Coordinate(0, 0));
+				path.add(new Coordinate(100, 100));
+				path.add(new Coordinate(0, 100));
+				path.add(new Coordinate(0, 100));
+				path.add(new Coordinate(90, 90)); // end
+				currentTarget = new Coordinate(10, 90); // start
+				break;
+			}
+		}
 	}
 	
 	public void setDirection() {
@@ -151,7 +206,7 @@ public class Agent {
 	// if agent learns of a target location, sidetrack
 	public void sideTrack(Coordinate c) {
 		path.add(currentTarget); // add current target to path again
-		path.add(new Coordinate(x, y)); // add current location to path
+//		path.add(new Coordinate(x, y)); // add current location to path *optional*
 		currentTarget = c; // change current target to target that was given
 		setDirection();
 	}
