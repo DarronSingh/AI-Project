@@ -1,8 +1,10 @@
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Scanner;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -13,20 +15,24 @@ public class Simulation extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private static final int FRAMEX = 1000, FRAMEY = 1000, SIZE = 100;
 	private static final String SIMNAME = "Simulation v1.0";
+	private static final DecimalFormat TIMEFORMAT = new DecimalFormat("#.00");
 	public boolean isSimulating;
 	private static int mode, wins, mostFound;
 	
-	private static Node[][] nodes = new Node[SIZE][SIZE];
-	private static Agent[] agents = new Agent[5];
+	private Node[][] nodes = new Node[SIZE][SIZE];
+	private Agent[] agents = new Agent[5];
 
-	public Simulation() {
+	public Simulation(int iteration) {
 		setup();
 		setFocusable(true);
 		isSimulating = true;
-		System.out.println("Simulation started in scenario " + mode);
+		System.out.println("Simulation #" + iteration + " started in scenario " + mode);
 	}
 	
 	public void setup() {
+		
+		// initialize counters
+		wins = mostFound = 0;
 		
 		// initialize agents
 		for (int i=0; i<agents.length; i++)
@@ -52,7 +58,7 @@ public class Simulation extends JPanel {
 		for (int i=0; i<agents.length*5; i++) {
 			nodes[xls[i]][yls[i]].setTargetID(i);
 			nodes[xls[i]][yls[i]].setAgentID(i/5);
-			System.out.println("Target " + i + " for Agent " + i/5 + " created at x:" + nodes[xls[i]][yls[i]].getX() + ", y:" + nodes[xls[i]][yls[i]].getY());
+//			System.out.println("Target " + i + " for Agent " + i/5 + " created at x:" + nodes[xls[i]][yls[i]].getX() + ", y:" + nodes[xls[i]][yls[i]].getY());
 		}
 	}
 	
@@ -114,10 +120,8 @@ public class Simulation extends JPanel {
 							agents[i].divertPath(new Coordinate(x1-5, y1)); // divert left
 					}
 					
-					// non moving collision
-					else {
-						System.out.println("error: not moving");
-					}
+					// non moving collision, should never happen
+					else {}
 				}
 			}
 		}
@@ -146,7 +150,7 @@ public class Simulation extends JPanel {
 						
 						// check if target is within search radius
 						if (isWithinRadius) {
-							System.out.println("Agent: " + agents[k].getAgentID() + " (" + agents[k].getColor() +") found Target: " + nodes[i][j].getTargetID());
+//							System.out.println("Agent: " + agents[k].getAgentID() + " (" + agents[k].getColor() +") found Target: " + nodes[i][j].getTargetID());
 							agents[k].addTarget(nodes[i][j]); // add to list of targets
 							nodes[i][j].clearTarget(); // remove targetID and agentID
 							nodes[i][j].setIsFound(true);
@@ -229,24 +233,74 @@ public class Simulation extends JPanel {
 	
 	public static void main(String args[]) throws InterruptedException {
 		
-		mode = 0;
+		Scanner in = new Scanner(System.in);
+		int iterations, simSpeed;
+		double runtime, totalRuntime;
 		
-		JFrame frame = new JFrame(SIMNAME + " - scenario " + (mode+1));
-		Simulation sim = new Simulation();
-		frame.add(sim);
-		frame.setSize(FRAMEX+15, FRAMEY+40); // offset so all cells show in window
-		frame.setResizable(false);
-		frame.setLocation(900, 0); // moved window to right to see command window
-		frame.setAlwaysOnTop(true);
-		frame.setVisible(true);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		while(sim.isSimulating) {
-			sim.update();
-			sim.repaint();
-			Thread.sleep(10);
+		// get scenario number
+		do {
+			System.out.print("Enter the scenario you wish to simulate (1-3): ");
+			mode = in.nextInt() - 1;
+		} while (mode < 0 || mode > 2);
+		
+		// get number of iterations
+		do {
+			System.out.print("Enter the number of iterations: ");
+			iterations = in.nextInt();
+		} while (iterations <= 0);
+		
+		// get simulation speed
+		do {
+			System.out.print("Enter simulation speed (0-4) or 5 for no animations: ");
+			simSpeed = in.nextInt();
+			simSpeed = ((5-simSpeed)*10);
+		} while (simSpeed != 0 && (simSpeed < 10 || simSpeed > 50));
+		
+		totalRuntime = System.nanoTime();
+		
+		for (int i=0; i<iterations; i++) {
+			System.out.println();
+			
+			JFrame frame = new JFrame(SIMNAME + " - scenario " + (mode+1));
+			Simulation sim = new Simulation(i);
+			
+			// decide whether to open window or not
+			if (simSpeed > 0) {
+				frame.add(sim);
+				frame.setSize(FRAMEX+15, FRAMEY+40); // offset so all cells show in window
+				frame.setResizable(false);
+				frame.setLocation(900, 10); // moved window to right to see command window
+				frame.setAlwaysOnTop(true);
+				frame.setVisible(true);
+				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			}
+			
+			while(sim.isSimulating) {
+				sim.update();
+				
+				// if no window, then don't do these
+				if (simSpeed>0 ) {
+					sim.repaint();
+					Thread.sleep(simSpeed);
+				}
+			}
+			
+			if (simSpeed > 0) {
+				frame.setVisible(false);
+				frame.dispose();
+			}
 		}
 		
-		System.out.println("Simulation complete in scenario " + mode);
+		// calculate time elapsed for all iterations
+		totalRuntime = (System.nanoTime() - totalRuntime)/1000000000.0;
+		
+		System.out.println();
+		if (simSpeed == 0)
+			System.out.println("Simulation complete in scenario " + (mode+1) + " with " + iterations + " iterations and no animation.");
+		else
+			System.out.println("Simulation complete in scenario " + (mode+1) + " with " + iterations + " iterations and animation speed " + (10-simSpeed)*10 + ".");
+		System.out.println("Total runtime: " + TIMEFORMAT.format(totalRuntime) + "s");
+		in.close();
 	}
 }

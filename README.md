@@ -12,7 +12,7 @@ This repository contains files for the SOFE3720 final project.
 - [X] Before sending message, agents check how many targets recipient has already found
 - [X] Agents should reroute based on which wall boundary they are farthest from
 - [ ] Come up with new default path for scenarios 2 and 3
-- [ ] CLI to choose scenario, speed and number of iterations on startup
+- [X] CLI to choose scenario, speed and number of iterations on startup
 - [ ] Generate .csv file based on results of simulation
 
 ![](https://i.imgur.com/xChvBe7.gif)

@@ -29,7 +29,7 @@ public class Agent {
 		spawn();
 		setupPath();
 		
-		System.out.println("Agent " + agentID + " created");
+//		System.out.println("Agent " + agentID + " created");
 		isActive = true;
 	}
 	
