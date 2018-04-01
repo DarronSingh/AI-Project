@@ -14,7 +14,7 @@ public class Simulation extends JPanel {
 	private static final int FRAMEX = 1000, FRAMEY = 1000, SIZE = 100;
 	private static final String SIMNAME = "Simulation v1.0";
 	public boolean isSimulating;
-	private static int mode, wins;
+	private static int mode, wins, mostFound;
 	
 	private static Node[][] nodes = new Node[SIZE][SIZE];
 	private static Agent[] agents = new Agent[5];
@@ -78,25 +78,40 @@ public class Simulation extends JPanel {
 				
 				
 				// check if agents are within 1 unit of each other
-				if (Math.abs(x1-x2) <= 2 && Math.abs(y1-y2) <= 2) {
+				if (Math.hypot(x1-x2, y1-y2) <= 5) {
 					
 					// check if agent 1 is moving horizontally
 					if (velX1 != 0) {
 						
 						// check if also moving vertically (diagonal case)
 						if (velY1 != 0) {
-							agents[i].divertPath(new Coordinate(x1+5, y1)); // divert to the right
+							 
+							// check which side of window is farther
+							if (FRAMEX - x1 > x1)
+								agents[i].divertPath(new Coordinate(x1+5, y1)); // divert right
+							else
+								agents[i].divertPath(new Coordinate(x1-5, y1)); // divert left
 						}
 						
 						// (horizontal only case)
 						else {
-							agents[i].divertPath(new Coordinate(x1, y1-5)); //divert up
+							
+							// check which side of window is farther
+							if (FRAMEY - y1 > y1)
+								agents[i].divertPath(new Coordinate(x1, y1-5)); // divert up
+							else
+								agents[i].divertPath(new Coordinate(x1, y1+5)); // divert down
 						}
 					}
 					
 					// check if agent 1 is moving vertically (vertical case)
 					else if (velY1 != 0) {
-						agents[i].divertPath(new Coordinate(x1+5, y1)); // divert to the right
+						
+						// check which side of window is farther
+						if (FRAMEX - x1 > x1)
+							agents[i].divertPath(new Coordinate(x1+5, y1)); // divert right
+						else
+							agents[i].divertPath(new Coordinate(x1-5, y1)); // divert left
 					}
 					
 					// non moving collision
@@ -135,6 +150,10 @@ public class Simulation extends JPanel {
 							agents[k].addTarget(nodes[i][j]); // add to list of targets
 							nodes[i][j].clearTarget(); // remove targetID and agentID
 							nodes[i][j].setIsFound(true);
+							
+							// check if new highest amount of targets found
+							if (agents[k].getNumFound() > mostFound)
+								mostFound = agents[k].getNumFound();
 						}
 					}
 					
@@ -144,6 +163,10 @@ public class Simulation extends JPanel {
 						// check if target is within search radius and is not already found
 						if (isWithinRadius && !nodes[i][j].getIsFound()) {
 							nodes[i][j].setIsFound(true);
+							
+							// if scenario 3, check if recipients has less than mostFound-2 targets found
+							if (mode == 2 && agents[nodes[i][j].getAgentID()].getNumFound() < mostFound-2)
+								continue;
 							agents[nodes[i][j].getAgentID()].addMessage(new Message(nodes[i][j].getAgentID(), "target found", new Coordinate(nodes[i][j].getX(), nodes[i][j].getY())));
 						}
 					}
@@ -172,7 +195,7 @@ public class Simulation extends JPanel {
 			if (a.getBroadcast().body.equals("won")) {
 				a.clearBroadcast();
 				wins++;
-				System.out.println(String.valueOf("Agent: " + a.getAgentID()) + " (" + a.getColor() +") found all targets.");
+				System.out.println(String.valueOf("Agent: " + a.getAgentID()) + " (" + a.getColor() +") found all targets. Step count: " + a.getStepCount());
 				
 				// scenario 1 = 5 wins, else 1 win
 				if ((mode == 1 && wins == agents.length) || mode != 1)
@@ -206,7 +229,7 @@ public class Simulation extends JPanel {
 	
 	public static void main(String args[]) throws InterruptedException {
 		
-		mode = 1;
+		mode = 0;
 		
 		JFrame frame = new JFrame(SIMNAME + " - scenario " + (mode+1));
 		Simulation sim = new Simulation();
@@ -221,7 +244,7 @@ public class Simulation extends JPanel {
 		while(sim.isSimulating) {
 			sim.update();
 			sim.repaint();
-			Thread.sleep(25);
+			Thread.sleep(10);
 		}
 		
 		System.out.println("Simulation complete in scenario " + mode);

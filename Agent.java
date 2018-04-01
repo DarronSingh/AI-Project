@@ -9,11 +9,11 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Agent {
 	
 	private int agentID;
-	private int x, y, radius, velX, velY;
+	private int x, y, radius, velX, velY, stepCount, numFound;
 	private int frameX, frameY;
 	private String color;
 	private Message broadcast;
-	boolean isActive, won, isDiverting;
+	boolean isActive, won, isDiverting, isHV;
 	
 	private ArrayList<Node> targets = new ArrayList<Node>(); // found targets go here
 	private Stack<Coordinate> path = new Stack<Coordinate>(); // path coordinates go here
@@ -25,6 +25,7 @@ public class Agent {
 		this.frameX = frameX;
 		this.frameY = frameY;
 		radius = 10; // radar radius
+		numFound = stepCount = 0;
 		spawn();
 		setupPath();
 		
@@ -123,9 +124,20 @@ public class Agent {
 		}		
 		setDirection(); // set the direction
 		
-		// move agent
+		// move agent normally
 		x+=velX;
 		y+=velY;
+		
+		// move agent based on how prof wanted
+		// if (isHV && velX!=0)
+		// x += velX;
+		// else if (!isHV && velY!=0)
+		// y += velY;
+		//
+		// isHV = !isHV;
+		
+		if (velX!=0) stepCount++;
+		if (velY!=0) stepCount++;
 	}
 	
 	// if 2 agents collide, 1 diverts
@@ -139,7 +151,7 @@ public class Agent {
 	// if agent learns of a target location, sidetrack
 	public void sideTrack(Coordinate c) {
 		path.add(currentTarget); // add current target to path again
-//		path.add(new Coordinate(x, y)); // add current location to path
+		path.add(new Coordinate(x, y)); // add current location to path
 		currentTarget = c; // change current target to target that was given
 		setDirection();
 	}
@@ -164,30 +176,28 @@ public class Agent {
 	}
 	
 	public void draw(Graphics2D g2d) {
-		// color code agents
+		// color code agents by rgb, 25% transparent
 		switch (agentID) {
 		case 0:
-			g2d.setColor(Color.GREEN);
+			g2d.setColor(new Color(0, 153, 51, 63));
 			break;
 		case 1:
-			g2d.setColor(Color.BLUE);
+			g2d.setColor(new Color(0, 102, 255, 63));
 			break;
 		case 2:
-			g2d.setColor(Color.BLACK);
+			g2d.setColor(new Color(0, 0, 0, 63));
 			break;
 		case 3:
-			g2d.setColor(Color.ORANGE);
+			g2d.setColor(new Color(255, 102, 0, 63));
 			break;
 		case 4:
-			g2d.setColor(Color.RED);
+			g2d.setColor(new Color(255, 0, 0, 63));
 			break;
 		}
 		
 		// scale up coordinates when drawing
 		// draw radar
-		g2d.drawOval(x*10-radius*10, y*10-radius*10, 2*radius*10, 2*radius*10);
-		g2d.drawOval(x*10-radius*10, y*10-radius*10, 2*radius*10-1, 2*radius*10-1);
-		g2d.drawOval(x*10-radius*10, y*10-radius*10, 2*radius*10-2, 2*radius*10-2);
+		g2d.fillOval(x*10-radius*10, y*10-radius*10, 2*radius*10, 2*radius*10);
 		
 		// draw agent
 		g2d.fillRect(x*10-radius/2, y*10-radius/2, 10, 10);
@@ -221,6 +231,14 @@ public class Agent {
 		return velY;
 	}
 	
+	public int getStepCount() {
+		return stepCount;
+	}
+	
+	public int getNumFound() {
+		return numFound;
+	}
+	
 	public String getColor() {
 		return color;
 	}
@@ -243,6 +261,7 @@ public class Agent {
 	
 	public void addTarget(Node target) {
 		targets.add(target);
+		numFound = targets.size();
 	}
 	
 	public void addPath(Coordinate c) {
