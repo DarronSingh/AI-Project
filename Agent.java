@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
@@ -16,6 +17,7 @@ public class Agent {
 	boolean isActive, won, isDiverting, isHV;
 	
 	private ArrayList<Node> targets = new ArrayList<Node>(); // found targets go here
+	private ArrayList<Double> happys  = new ArrayList<Double>(); // happiness go here
 	private Stack<Coordinate> path = new Stack<Coordinate>(); // path coordinates go here
 	private Queue<Message> inbox = new LinkedList<Message>(); // direct messages go here
 	private Coordinate currentTarget;
@@ -191,8 +193,13 @@ public class Agent {
 		//
 		// isHV = !isHV;
 		
-		if (velX!=0) stepCount++;
-		if (velY!=0) stepCount++;
+		if (velX!=0) { 
+			stepCount++;
+			addHappinessValue();
+		}
+		if (velY!=0) {
+			stepCount++;
+		}
 	}
 	
 	// if 2 agents collide, 1 diverts
@@ -206,7 +213,8 @@ public class Agent {
 	// if agent learns of a target location, sidetrack
 	public void sideTrack(Coordinate c) {
 		path.add(currentTarget); // add current target to path again
-//		path.add(new Coordinate(x, y)); // add current location to path *optional*
+		if (Simulation.mode == 1)
+			path.add(new Coordinate(x, y)); // add current location to path, only needed for mode 2
 		currentTarget = c; // change current target to target that was given
 		setDirection();
 	}
@@ -221,9 +229,11 @@ public class Agent {
 	}
 	
 	public void update() {
+		
 		checkInbox();
 		move();
 		
+		// if we have won, no need to broadcast
 		if (!won && targets.size() == 5) {
 			broadcast = new Message(-1, "won", new Coordinate(x, y));
 			won = true;
@@ -292,6 +302,44 @@ public class Agent {
 	
 	public int getNumFound() {
 		return numFound;
+	}
+	
+	public void addHappinessValue() {
+		happys.add((Double)(double)numFound/((double)stepCount+1.0));
+	}
+	
+	public double getHappiness() {
+		return happys.get(happys.size()-1);
+	}
+	
+	public double getMaxHappiness() {
+		return Collections.max(happys);
+	}
+	
+	public double getMinHappiness() {
+		return Collections.min(happys);
+	}
+	
+	public double getAverageHappiness() {
+		double total = 0;
+		for (Double h : happys)
+			total+=(double)h;
+		return total;
+	}
+	
+	public double getVarianceHappiness() {
+		double avg = getAverageHappiness(), temp = 0;
+		for (Double d : happys)
+			temp += (d-avg)*(d-avg);
+		return temp/(happys.size()-1);
+	}
+	
+	public double getSTDHappiness() {
+		return Math.sqrt(getVarianceHappiness());
+	}
+	
+	public double getCompetitiveness() {
+		return (getHappiness() - getMinHappiness()) / (getMaxHappiness() - getMinHappiness());
 	}
 	
 	public String getColor() {

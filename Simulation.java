@@ -1,6 +1,10 @@
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,9 +20,11 @@ public class Simulation extends JPanel {
 	private static final int FRAMEX = 1000, FRAMEY = 1000, SIZE = 100;
 	private static final String SIMNAME = "Simulation v1.0";
 	private static final DecimalFormat TIMEFORMAT = new DecimalFormat("#.00");
-	public boolean isSimulating;
+	private PrintWriter pw;
+	private StringBuilder sb;
 	private static int wins, mostFound;
 	public static int mode;
+	public boolean isSimulating;
 	
 	private Node[][] nodes = new Node[SIZE][SIZE];
 	private Agent[] agents = new Agent[5];
@@ -85,7 +91,7 @@ public class Simulation extends JPanel {
 				
 				
 				// check if agents are within 1 unit of each other
-				if (Math.hypot(x1-x2, y1-y2) <= 5) {
+				if (Math.hypot(x1-x2, y1-y2) <= 10) {
 					
 					// check if agent 1 is moving horizontally
 					if (velX1 != 0) {
@@ -232,12 +238,48 @@ public class Simulation extends JPanel {
 			agents[i].draw(g2d);
 	}
 	
-	public static void main(String args[]) throws InterruptedException {
+	public void generateCSV(int iteration) throws FileNotFoundException {
+		pw = new PrintWriter(new File("G13_1.csv"));
+		sb = new StringBuilder();
+		
+		sb.append("a,b,c,d,e,f,g,h,i,j,k\n"); // columns
+		
+		for (Agent a : agents) {
+			sb.append(String.valueOf(mode)); // a
+			sb.append(",");
+			sb.append(String.valueOf(iteration)); // b
+			sb.append(",");
+			sb.append(String.valueOf(a.getAgentID())); // c
+			sb.append(",");
+			sb.append(String.valueOf(a.getNumFound())); // d
+			sb.append(",");
+			sb.append(String.valueOf(a.getStepCount())); // e
+			sb.append(",");
+			sb.append(String.valueOf(a.getHappiness())); // f
+			sb.append(",");
+			sb.append(String.valueOf(a.getMaxHappiness())); // g
+			sb.append(",");
+			sb.append(String.valueOf(a.getMinHappiness())); // h
+			sb.append(",");
+			sb.append(String.valueOf(a.getAverageHappiness())); // i
+			sb.append(",");
+			sb.append(String.valueOf(a.getSTDHappiness())); // j
+			sb.append(",");
+			sb.append(String.valueOf(a.getCompetitiveness())); // k
+			sb.append("\n");
+		}
+		
+		pw.write(sb.toString());
+		pw.close();
+	}
+	
+	public void log(String s) {
+	}
+	
+	public static void main(String args[]) throws InterruptedException, IOException {
 		
 		Scanner in = new Scanner(System.in);
 		int iterations, simSpeed;
-		double totalRuntime;
-		
 		
 		// get scenario number
 		do {
@@ -258,7 +300,7 @@ public class Simulation extends JPanel {
 			simSpeed = ((5-simSpeed)*10);
 		} while (simSpeed != 0 && (simSpeed < 10 || simSpeed > 50));
 		
-		totalRuntime = System.nanoTime();
+		double totalRuntime = System.nanoTime();
 		
 		for (int i=0; i<iterations; i++) {
 			System.out.println();
@@ -287,6 +329,8 @@ public class Simulation extends JPanel {
 				}
 			}
 			
+			sim.generateCSV(i); // output csv
+			
 			if (simSpeed > 0) {
 				frame.setVisible(false);
 				frame.dispose();
@@ -300,7 +344,7 @@ public class Simulation extends JPanel {
 		if (simSpeed == 0)
 			System.out.println("Simulation complete in scenario " + (mode+1) + " with " + iterations + " iterations and no animation.");
 		else
-			System.out.println("Simulation complete in scenario " + (mode+1) + " with " + iterations + " iterations and animation speed " + (10-simSpeed)*10 + ".");
+			System.out.println("Simulation complete in scenario " + (mode+1) + " with " + iterations + " iterations and animation speed " + simSpeed + ".");
 		System.out.println("Total runtime: " + TIMEFORMAT.format(totalRuntime) + "s");
 		in.close();
 	}
