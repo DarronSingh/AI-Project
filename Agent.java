@@ -109,6 +109,7 @@ public class Agent {
 				path.add(new Coordinate(100, 0));
 				path.add(new Coordinate(100, 100));
 				path.add(new Coordinate(0, 100));
+				path.add(new Coordinate(50, 50)); // back to center
 				path.add(new Coordinate(90, 10)); // end
 				currentTarget = new Coordinate(10, 10); // start
 				break;
@@ -117,6 +118,7 @@ public class Agent {
 				path.add(new Coordinate(0, 0));
 				path.add(new Coordinate(100, 0));
 				path.add(new Coordinate(100, 100));
+				path.add(new Coordinate(44, 44)); // back to center
 				path.add(new Coordinate(10, 30)); // end
 				currentTarget = new Coordinate(90, 30); // start
 				break;
@@ -125,6 +127,7 @@ public class Agent {
 				path.add(new Coordinate(0, 100));
 				path.add(new Coordinate(0, 0));
 				path.add(new Coordinate(100, 0));
+				path.add(new Coordinate(56, 44)); // back to center
 				path.add(new Coordinate(90, 50)); // end
 				currentTarget = new Coordinate(10, 50); // start
 				break;
@@ -133,6 +136,7 @@ public class Agent {
 				path.add(new Coordinate(100, 100));
 				path.add(new Coordinate(0, 100));
 				path.add(new Coordinate(0, 0));
+				path.add(new Coordinate(44, 54)); // back to center
 				path.add(new Coordinate(10, 70)); // end
 				currentTarget = new Coordinate(90, 70); // start
 				break;
@@ -141,6 +145,7 @@ public class Agent {
 				path.add(new Coordinate(100, 100));
 				path.add(new Coordinate(0, 100));
 				path.add(new Coordinate(0, 100));
+				path.add(new Coordinate(54, 54)); // back to center
 				path.add(new Coordinate(90, 90)); // end
 				currentTarget = new Coordinate(10, 90); // start
 				break;
