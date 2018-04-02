@@ -12,6 +12,6 @@ This repository contains files for the SOFE3720 final project.
 - [X] Agents should reroute based on which wall boundary they are farthest from
 - [X] Come up with new default path for scenarios 2 and 3
 - [X] CLI to choose scenario, speed and number of iterations on startup
-- [ ] Generate .csv file based on results of simulation
+- [X] Generate .csv file based on results of simulation
 
 ![](https://i.imgur.com/xChvBe7.gif)
