@@ -337,6 +337,8 @@ public class Agent {
 	}
 	
 	public double getCompetitiveness() {
+		if (getHappiness() == 0)
+			return 0;
 		return (getHappiness() - getMinHappiness()) / (getMaxHappiness() - getMinHappiness());
 	}
 	

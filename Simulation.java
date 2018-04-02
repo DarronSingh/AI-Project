@@ -20,6 +20,7 @@ public class Simulation extends JPanel {
 	private static final DecimalFormat TIMEFORMAT = new DecimalFormat("#.00");
 	private static int wins, mostFound;
 	public static int mode;
+	private static double totHap = 0, totComp = 0;
 	public boolean isSimulating;
 	
 	private Node[][] nodes = new Node[SIZE][SIZE];
@@ -233,14 +234,12 @@ public class Simulation extends JPanel {
 			agents[i].draw(g2d);
 	}
 	
-	public void generateCSV(int iteration) throws IOException {
+	public void generateCSV1(int iteration) throws IOException {
 		FileWriter fw = new FileWriter("G13_1.csv", true);
 		StringBuilder sb = new StringBuilder();
 		
-//		sb.append("a,b,c,d,e,f,g,h,i,j,k\n"); // columns
-		
 		for (Agent a : agents) {
-			sb.append(String.valueOf(mode)); // a
+			sb.append(String.valueOf(mode+1)); // a (1-3)
 			sb.append(",");
 			sb.append(String.valueOf(iteration)); // b
 			sb.append(",");
@@ -262,13 +261,28 @@ public class Simulation extends JPanel {
 			sb.append(",");
 			sb.append(String.valueOf(a.getCompetitiveness())); // k
 			sb.append("\n");
+			
+			totHap += a.getAverageHappiness();
+			totComp += a.getCompetitiveness();
 		}
 		
 		fw.write(sb.toString());
 		fw.close();
 	}
 	
-	public void log(String s) {
+	public void generateCSV2(int iterations) throws IOException{
+		FileWriter fw = new FileWriter("G13_2.csv");
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append(String.valueOf(mode+1)); // (1-3)
+		sb.append(",");
+		sb.append(String.valueOf(totHap/(5*iterations)));
+		sb.append(",");
+		sb.append(String.valueOf(totComp/(5*iterations)));
+		sb.append("\n");
+		
+		fw.write(sb.toString());
+		fw.close();
 	}
 	
 	public static void main(String args[]) throws InterruptedException, IOException {
@@ -297,11 +311,13 @@ public class Simulation extends JPanel {
 		
 		double totalRuntime = System.nanoTime();
 		
+		Simulation sim = null;
+		
 		for (int i=0; i<iterations; i++) {
 			System.out.println();
 			
 			JFrame frame = new JFrame(SIMNAME + " - scenario " + (mode+1));
-			Simulation sim = new Simulation(i);
+			sim = new Simulation(i);
 			
 			// decide whether to open window or not
 			if (simSpeed > 0) {
@@ -324,13 +340,17 @@ public class Simulation extends JPanel {
 				}
 			}
 			
-			sim.generateCSV(i); // output csv
+			// output csv 1 for each iteration
+			sim.generateCSV1(i);
 			
 			if (simSpeed > 0) {
 				frame.setVisible(false);
 				frame.dispose();
 			}
 		}
+		
+		// output csv 2 for all iterations
+		sim.generateCSV2(iterations);
 		
 		// calculate time elapsed for all iterations
 		totalRuntime = (System.nanoTime() - totalRuntime)/1000000000.0;
