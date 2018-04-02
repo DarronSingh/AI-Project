@@ -14,6 +14,11 @@ This repository contains files for the SOFE3720 final project.
 - [X] CLI to choose scenario, speed and number of iterations on startup
 - [X] Generate .csv file based on results of simulation
 
+#### Example scenario 1
 ![Scenario 1](https://i.imgur.com/VvFI2Tb.gif)
+
+#### Example scenario 2
 ![Scenario 2](https://i.imgur.com/ZobhLvc.gif)
+
+#### Example scenario 3
 ![Scenario 3](https://i.imgur.com/mqfhwDd.gif)
