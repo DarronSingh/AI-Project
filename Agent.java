@@ -169,10 +169,7 @@ public class Agent {
 	public void move() {
 		// if we have reached the current target
 		if (x == currentTarget.getX() && y == currentTarget.getY()) {
-			if (path.isEmpty()) {
-				broadcast = new Message(-1, "done path", new Coordinate(x, y));
-				isActive = false;
-			} else {
+			if (!path.isEmpty()) {
 				// get next in line, pop it from stack
 				currentTarget = path.pop();
 				if (isDiverting)
@@ -306,7 +303,7 @@ public class Agent {
 	}
 	
 	public void addHappinessValue() {
-		happys.add((Double)(double)numFound/((double)stepCount+1.0));
+		happys.add((double)numFound/(stepCount+1.0));
 	}
 	
 	public double getHappiness() {
