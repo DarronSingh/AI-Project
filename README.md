@@ -1,6 +1,15 @@
 # AI-Project
 This repository contains files for the SOFE3720 final project.
 
+#### Example scenario 1
+<img src="https://i.imgur.com/VvFI2Tb.gif" width=640>
+
+#### Example scenario 2
+<img src="https://i.imgur.com/ZobhLvc.gif" width=640>
+
+#### Example scenario 3
+<img src="https://i.imgur.com/mqfhwDd.gif" width=640>
+
 ## TODO
 - [X] Agents should follow predetermined path
 - [X] Agent should stop if it rear ends another agent
@@ -13,12 +22,3 @@ This repository contains files for the SOFE3720 final project.
 - [X] Come up with new default path for scenarios 2 and 3
 - [X] CLI to choose scenario, speed and number of iterations on startup
 - [X] Generate .csv file based on results of simulation
-
-#### Example scenario 1
-![Scenario 1](https://i.imgur.com/VvFI2Tb.gif)
-
-#### Example scenario 2
-![Scenario 2](https://i.imgur.com/ZobhLvc.gif)
-
-#### Example scenario 3
-![Scenario 3](https://i.imgur.com/mqfhwDd.gif)
