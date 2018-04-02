@@ -16,7 +16,7 @@ public class Simulation extends JPanel {
 	
 	private static final long serialVersionUID = 1L;
 	private static final int FRAMEX = 1000, FRAMEY = 1000, SIZE = 100;
-	private static final String SIMNAME = "Simulation v1.0";
+	private static final String SIMNAME = "Simulation v1.0", CSV1NAME = "G13_1.csv", CSV2NAME = "G13_2.csv";
 	private static final DecimalFormat TIMEFORMAT = new DecimalFormat("#.00");
 	private static int wins, mostFound;
 	public static int mode;
@@ -235,7 +235,7 @@ public class Simulation extends JPanel {
 	}
 	
 	public void generateCSV1(int iteration) throws IOException {
-		FileWriter fw = new FileWriter("G13_1.csv", true);
+		FileWriter fw = new FileWriter(CSV1NAME, true);
 		StringBuilder sb = new StringBuilder();
 		
 		for (Agent a : agents) {
@@ -271,7 +271,7 @@ public class Simulation extends JPanel {
 	}
 	
 	public void generateCSV2(int iterations) throws IOException{
-		FileWriter fw = new FileWriter("G13_2.csv");
+		FileWriter fw = new FileWriter(CSV2NAME, true);
 		StringBuilder sb = new StringBuilder();
 		
 		sb.append(String.valueOf(mode+1)); // (1-3)
