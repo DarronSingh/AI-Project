@@ -237,7 +237,7 @@ public class Simulation extends JPanel {
 		FileWriter fw = new FileWriter("G13_1.csv", true);
 		StringBuilder sb = new StringBuilder();
 		
-		sb.append("a,b,c,d,e,f,g,h,i,j,k\n"); // columns
+//		sb.append("a,b,c,d,e,f,g,h,i,j,k\n"); // columns
 		
 		for (Agent a : agents) {
 			sb.append(String.valueOf(mode)); // a

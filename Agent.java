@@ -199,6 +199,7 @@ public class Agent {
 		}
 		if (velY!=0) {
 			stepCount++;
+			addHappinessValue();
 		}
 	}
 	
