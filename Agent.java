@@ -105,47 +105,47 @@ public class Agent {
 		else {
 			switch (agentID) {
 			case 0:
+				path.add(new Coordinate(50, 50)); // back to center
 				path.add(new Coordinate(0, 0));
 				path.add(new Coordinate(100, 0));
 				path.add(new Coordinate(100, 100));
 				path.add(new Coordinate(0, 100));
-				path.add(new Coordinate(50, 50)); // back to center
-				path.add(new Coordinate(90, 10)); // end
+				path.add(new Coordinate(90, 10));
 				currentTarget = new Coordinate(10, 10); // start
 				break;
 			case 1:
+				path.add(new Coordinate(44, 44)); // back to center
 				path.add(new Coordinate(0, 100));
 				path.add(new Coordinate(0, 0));
 				path.add(new Coordinate(100, 0));
 				path.add(new Coordinate(100, 100));
-				path.add(new Coordinate(44, 44)); // back to center
-				path.add(new Coordinate(10, 30)); // end
+				path.add(new Coordinate(10, 30));
 				currentTarget = new Coordinate(90, 30); // start
 				break;
 			case 2:
+				path.add(new Coordinate(56, 44)); // back to center
 				path.add(new Coordinate(100, 100));
 				path.add(new Coordinate(0, 100));
 				path.add(new Coordinate(0, 0));
 				path.add(new Coordinate(100, 0));
-				path.add(new Coordinate(56, 44)); // back to center
-				path.add(new Coordinate(90, 50)); // end
+				path.add(new Coordinate(90, 50));
 				currentTarget = new Coordinate(10, 50); // start
 				break;
 			case 3:
+				path.add(new Coordinate(44, 54)); // back to center
 				path.add(new Coordinate(100, 0));
 				path.add(new Coordinate(100, 100));
 				path.add(new Coordinate(0, 100));
 				path.add(new Coordinate(0, 0));
-				path.add(new Coordinate(44, 54)); // back to center
-				path.add(new Coordinate(10, 70)); // end
+				path.add(new Coordinate(10, 70));
 				currentTarget = new Coordinate(90, 70); // start
 				break;
 			case 4:
+				path.add(new Coordinate(54, 54)); // back to center
 				path.add(new Coordinate(0, 0));
 				path.add(new Coordinate(100, 100));
 				path.add(new Coordinate(0, 100));
 				path.add(new Coordinate(0, 100));
-				path.add(new Coordinate(54, 54)); // back to center
 				path.add(new Coordinate(90, 90)); // end
 				currentTarget = new Coordinate(10, 90); // start
 				break;
