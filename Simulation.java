@@ -1,10 +1,8 @@
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,8 +18,6 @@ public class Simulation extends JPanel {
 	private static final int FRAMEX = 1000, FRAMEY = 1000, SIZE = 100;
 	private static final String SIMNAME = "Simulation v1.0";
 	private static final DecimalFormat TIMEFORMAT = new DecimalFormat("#.00");
-	private PrintWriter pw;
-	private StringBuilder sb;
 	private static int wins, mostFound;
 	public static int mode;
 	public boolean isSimulating;
@@ -127,8 +123,7 @@ public class Simulation extends JPanel {
 							agents[i].divertPath(new Coordinate(x1-5, y1)); // divert left
 					}
 					
-					// non moving collision, should never happen
-					else {}
+					else {/*non moving collision, should never happen*/}
 				}
 			}
 		}
@@ -238,9 +233,9 @@ public class Simulation extends JPanel {
 			agents[i].draw(g2d);
 	}
 	
-	public void generateCSV(int iteration) throws FileNotFoundException {
-		pw = new PrintWriter(new File("G13_1.csv"));
-		sb = new StringBuilder();
+	public void generateCSV(int iteration) throws IOException {
+		FileWriter fw = new FileWriter("G13_1.csv", true);
+		StringBuilder sb = new StringBuilder();
 		
 		sb.append("a,b,c,d,e,f,g,h,i,j,k\n"); // columns
 		
@@ -269,8 +264,8 @@ public class Simulation extends JPanel {
 			sb.append("\n");
 		}
 		
-		pw.write(sb.toString());
-		pw.close();
+		fw.write(sb.toString());
+		fw.close();
 	}
 	
 	public void log(String s) {
