@@ -4,7 +4,6 @@ public class Message {
 	int recipient;
 	Coordinate coordinate;
 	
-	// broadcast message
 	public Message(int recipient, String body, Coordinate coordinate) {
 		this.recipient = recipient;
 		this.body = body;

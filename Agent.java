@@ -14,7 +14,7 @@ public class Agent {
 	private int frameX, frameY;
 	private String color;
 	private Message broadcast;
-	boolean isActive, won, isDiverting, isHV;
+	boolean isActive, won, isDiverting;
 	
 	private ArrayList<Node> targets = new ArrayList<Node>(); // found targets go here
 	private ArrayList<Double> happys  = new ArrayList<Double>(); // happiness go here
@@ -31,7 +31,6 @@ public class Agent {
 		spawn();
 		setupPath(Simulation.mode);
 		
-//		System.out.println("Agent " + agentID + " created");
 		isActive = true;
 	}
 	
@@ -187,14 +186,6 @@ public class Agent {
 		x+=velX;
 		y+=velY;
 		
-		// move agent based on how prof wanted
-		// if (isHV && velX!=0)
-		// x += velX;
-		// else if (!isHV && velY!=0)
-		// y += velY;
-		//
-		// isHV = !isHV;
-		
 		if (velX!=0) { 
 			stepCount++;
 			addHappinessValue();
@@ -263,7 +254,6 @@ public class Agent {
 			break;
 		}
 		
-		// scale up coordinates when drawing
 		// draw radar
 		g2d.fillOval(x*10-radius*10, y*10-radius*10, 2*radius*10, 2*radius*10);
 		

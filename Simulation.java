@@ -62,7 +62,6 @@ public class Simulation extends JPanel {
 		for (int i=0; i<agents.length*5; i++) {
 			nodes[xls[i]][yls[i]].setTargetID(i);
 			nodes[xls[i]][yls[i]].setAgentID(i/5);
-//			System.out.println("Target " + i + " for Agent " + i/5 + " created at x:" + nodes[xls[i]][yls[i]].getX() + ", y:" + nodes[xls[i]][yls[i]].getY());
 		}
 	}
 	
@@ -153,7 +152,6 @@ public class Simulation extends JPanel {
 						
 						// check if target is within search radius
 						if (isWithinRadius) {
-//							System.out.println("Agent: " + agents[k].getAgentID() + " (" + agents[k].getColor() +") found Target: " + nodes[i][j].getTargetID());
 							agents[k].addTarget(nodes[i][j]); // add to list of targets
 							nodes[i][j].clearTarget(); // remove targetID and agentID
 							nodes[i][j].setIsFound(true);
@@ -357,9 +355,9 @@ public class Simulation extends JPanel {
 		
 		System.out.println();
 		if (simSpeed == 0)
-			System.out.println("Simulation complete in scenario " + (mode+1) + " with " + iterations + " iterations and no animation.");
+			System.out.println("Simulation complete in scenario " + (mode+1) + " with " + iterations + " iteration(s) and no animation.");
 		else
-			System.out.println("Simulation complete in scenario " + (mode+1) + " with " + iterations + " iterations and animation speed " + simSpeed + ".");
+			System.out.println("Simulation complete in scenario " + (mode+1) + " with " + iterations + " iteration(s) and animation speed " + -(simSpeed/10-5) + ".");
 		System.out.println("Total runtime: " + TIMEFORMAT.format(totalRuntime) + "s");
 		in.close();
 	}
