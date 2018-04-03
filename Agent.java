@@ -8,20 +8,20 @@ import java.util.Stack;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Agent {
-	
+
 	private int agentID;
 	private int x, y, radius, velX, velY, stepCount, numFound;
 	private int frameX, frameY;
 	private String color;
 	private Message broadcast;
 	boolean isActive, won, isDiverting;
-	
+
 	private ArrayList<Node> targets = new ArrayList<Node>(); // found targets go here
-	private ArrayList<Double> happys  = new ArrayList<Double>(); // happiness go here
+	private ArrayList<Double> happys = new ArrayList<Double>(); // happiness go here
 	private Stack<Coordinate> path = new Stack<Coordinate>(); // path coordinates go here
 	private Queue<Message> inbox = new LinkedList<Message>(); // direct messages go here
 	private Coordinate currentTarget;
-	
+
 	public Agent(int agentID, int frameX, int frameY) {
 		this.agentID = agentID;
 		this.frameX = frameX;
@@ -30,16 +30,16 @@ public class Agent {
 		numFound = stepCount = 0;
 		spawn();
 		setupPath(Simulation.mode);
-		
+
 		isActive = true;
 	}
-	
+
 	public void spawn() {
 		// randomly generate location
-		x = ThreadLocalRandom.current().nextInt(0, frameX/10-2*radius);
-		y = ThreadLocalRandom.current().nextInt(0, frameY/10-2*radius);
+		x = ThreadLocalRandom.current().nextInt(0, frameX / 10 - 2 * radius);
+		y = ThreadLocalRandom.current().nextInt(0, frameY / 10 - 2 * radius);
 	}
-	
+
 	public void setupPath(int mode) {
 		// set color and create path in reverse
 		switch (agentID) {
@@ -81,9 +81,9 @@ public class Agent {
 		}
 		generatePath(Simulation.mode);
 	}
-	
+
 	public void generatePath(int mode) {
-		
+
 		if (mode == 0) {
 			// add path to stack in reverse so we can unstack it normally
 			path.add(new Coordinate(0, 0)); // top left
@@ -98,8 +98,8 @@ public class Agent {
 			path.add(new Coordinate(100, 80));
 			path.add(new Coordinate(100, 100));
 			path.add(new Coordinate(0, 100)); // bottom left
-		} 
-		
+		}
+
 		// scenario 2 and 3 path
 		else {
 			switch (agentID) {
@@ -151,7 +151,7 @@ public class Agent {
 			}
 		}
 	}
-	
+
 	public void setDirection() {
 		// decide left, right or none
 		if (x > currentTarget.getX())
@@ -160,7 +160,7 @@ public class Agent {
 			velX = 1;
 		else
 			velX = 0;
-		
+
 		// decide up, down or none
 		if (y > currentTarget.getY())
 			velY = -1;
@@ -169,7 +169,7 @@ public class Agent {
 		else
 			velY = 0;
 	}
-	
+
 	public void move() {
 		// if we have reached the current target
 		if (x == currentTarget.getX() && y == currentTarget.getY()) {
@@ -179,23 +179,23 @@ public class Agent {
 				if (isDiverting)
 					isDiverting = false;
 			}
-		}		
+		}
 		setDirection(); // set the direction
-		
+
 		// move agent normally
-		x+=velX;
-		y+=velY;
-		
-		if (velX!=0) { 
+		x += velX;
+		y += velY;
+
+		if (velX != 0) {
 			stepCount++;
 			addHappinessValue();
 		}
-		if (velY!=0) {
+		if (velY != 0) {
 			stepCount++;
 			addHappinessValue();
 		}
 	}
-	
+
 	// if 2 agents collide, 1 diverts
 	public void divertPath(Coordinate c) {
 		isDiverting = true;
@@ -203,7 +203,7 @@ public class Agent {
 		currentTarget = c; // change current target to diverting path
 		setDirection(); // change direction according to new target
 	}
-	
+
 	// if agent learns of a target location, sidetrack
 	public void sideTrack(Coordinate c) {
 		path.add(currentTarget); // add current target to path again
@@ -212,28 +212,28 @@ public class Agent {
 		currentTarget = c; // change current target to target that was given
 		setDirection();
 	}
-	
+
 	public void checkInbox() {
 		// if inbox isn't empty, side track current path to new target
 		if (!inbox.isEmpty()) {
-			for (int i=0; i<inbox.size(); i++) {
+			for (int i = 0; i < inbox.size(); i++) {
 				sideTrack(inbox.remove().coordinate);
 			}
 		}
 	}
-	
+
 	public void update() {
-		
+
 		checkInbox();
 		move();
-		
+
 		// if we have won, no need to broadcast
 		if (!won && targets.size() == 5) {
 			broadcast = new Message(-1, "won", new Coordinate(x, y));
 			won = true;
 		}
 	}
-	
+
 	public void draw(Graphics2D g2d) {
 		// color code agents by rgb, 25% transparent
 		switch (agentID) {
@@ -253,127 +253,127 @@ public class Agent {
 			g2d.setColor(new Color(255, 0, 0, 63));
 			break;
 		}
-		
+
 		// draw radar
-		g2d.fillOval(x*10-radius*10, y*10-radius*10, 2*radius*10, 2*radius*10);
-		
+		g2d.fillOval(x * 10 - radius * 10, y * 10 - radius * 10, 2 * radius * 10, 2 * radius * 10);
+
 		// draw agent
-		g2d.fillRect(x*10-radius/2, y*10-radius/2, 10, 10);
+		g2d.fillRect(x * 10 - radius / 2, y * 10 - radius / 2, 10, 10);
 	}
-	
+
 	public int getAgentID() {
 		return agentID;
 	}
-	
+
 	public int getX() {
 		return x;
 	}
-	
+
 	public int getY() {
 		return y;
 	}
-	
+
 	public int getRadius() {
 		return radius;
 	}
-	
+
 	public int getDiameter() {
-		return 2*radius;
+		return 2 * radius;
 	}
-	
+
 	public int getVelX() {
 		return velX;
 	}
-	
+
 	public int getVelY() {
 		return velY;
 	}
-	
+
 	public int getStepCount() {
 		return stepCount;
 	}
-	
+
 	public int getNumFound() {
 		return numFound;
 	}
-	
+
 	public void addHappinessValue() {
-		happys.add((double)numFound/(stepCount+1.0));
+		happys.add((double) numFound / (stepCount + 1.0));
 	}
-	
+
 	public double getHappiness() {
-		return happys.get(happys.size()-1);
+		return happys.get(happys.size() - 1);
 	}
-	
+
 	public double getMaxHappiness() {
 		return Collections.max(happys);
 	}
-	
+
 	public double getMinHappiness() {
 		return Collections.min(happys);
 	}
-	
+
 	public double getAverageHappiness() {
 		double total = 0;
 		for (Double h : happys)
-			total+=(double)h;
+			total += (double) h;
 		return total;
 	}
-	
+
 	public double getVarianceHappiness() {
 		double avg = getAverageHappiness(), temp = 0;
 		for (Double d : happys)
-			temp += (d-avg)*(d-avg);
-		return temp/(happys.size()-1);
+			temp += (d - avg) * (d - avg);
+		return temp / (happys.size() - 1);
 	}
-	
+
 	public double getSTDHappiness() {
 		return Math.sqrt(getVarianceHappiness());
 	}
-	
+
 	public double getCompetitiveness() {
 		if (getHappiness() == 0)
 			return 0;
 		return (getHappiness() - getMinHappiness()) / (getMaxHappiness() - getMinHappiness());
 	}
-	
+
 	public String getColor() {
 		return color;
 	}
-	
+
 	public String locationToString() {
 		return "(" + String.valueOf(x) + ", " + String.valueOf(y) + ")";
 	}
-	
+
 	public void setVelX(int velX) {
 		this.velX = velX;
 	}
-	
+
 	public void setVelY(int velY) {
 		this.velY = velY;
 	}
-	
+
 	public ArrayList<Node> getTargets() {
 		return targets;
 	}
-	
+
 	public void addTarget(Node target) {
 		targets.add(target);
 		numFound = targets.size();
 	}
-	
+
 	public void addPath(Coordinate c) {
 		path.add(c);
 	}
-	
+
 	public Message getBroadcast() {
 		return broadcast;
 	}
-	
+
 	public void clearBroadcast() {
 		broadcast = null;
 	}
-	
+
 	public void addMessage(Message m) {
 		inbox.add(m);
 	}

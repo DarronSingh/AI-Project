@@ -17,10 +17,10 @@ public class Node {
 	public void draw(Graphics2D g2d) {
 		// draw cells
 		g2d.setColor(Color.LIGHT_GRAY);
-		g2d.drawRect(x*10, y*10, width, width);
-		
+		g2d.drawRect(x * 10, y * 10, width, width);
+
 		// draw targets
-		if (agentID>=0) {
+		if (agentID >= 0) {
 			switch (agentID) {
 			case 0:
 				g2d.setColor(Color.GREEN);
@@ -38,9 +38,9 @@ public class Node {
 				g2d.setColor(Color.RED);
 				break;
 			}
-			
+
 			// scale up coordinates for drawing
-			g2d.fillRect(x*10, y*10, width, width);
+			g2d.fillRect(x * 10, y * 10, width, width);
 		}
 	}
 
@@ -51,7 +51,7 @@ public class Node {
 	public int getAgentID() {
 		return agentID;
 	}
-	
+
 	public void setTargetID(int targetID) {
 		this.targetID = targetID;
 	}
@@ -59,11 +59,11 @@ public class Node {
 	public int getTargetID() {
 		return targetID;
 	}
-	
+
 	public int getX() {
 		return x;
 	}
-	
+
 	public int getY() {
 		return y;
 	}
@@ -72,11 +72,11 @@ public class Node {
 		agentID = -1;
 		targetID = -1;
 	}
-	
+
 	public void setIsFound(boolean isFound) {
 		this.isFound = isFound;
 	}
-	
+
 	public boolean getIsFound() {
 		return isFound;
 	}
